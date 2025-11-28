@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Encuesta offline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="manifest.json" />
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("service-worker.js");
+    });
+  }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f5f5f5;
+    }
+    .app {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 0;
+    }
+    fieldset {
+      border: none;
+      margin: 1rem 0;
+      padding: 1rem 0;
+      border-top: 1px solid #eee;
+    }
+    legend {
+      font-weight: 600;
+      padding: 0 .25rem;
+    }
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: .35rem;
+    }
+    .question {
+      margin-bottom: 1rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: .4rem .5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: .95rem;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .options-inline label {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 1rem;
+      font-weight: 400;
+    }
+    .options-inline input {
+      margin-right: .25rem;
+    }
+    .btn-row {
+      display: flex;
+      gap: .5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: .6rem 1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: .95rem;
+    }
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .badge {
+      display: inline-block;
+      padding: .2rem .6rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      background: #e0f2fe;
+      color: #0369a1;
+      margin-left: .5rem;
+    }
+    .offline-indicator {
+      margin-bottom: .75rem;
+      font-size: .85rem;
+      padding: .4rem .6rem;
+      border-radius: 8px;
+      background: #fef9c3;
+      color: #854d0e;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="offline-indicator" id="offlineIndicator">
+      <span>📶</span>
+      <span id="offlineText">Verificando conexión…</span>
+    </div>
+    <h1>Encuesta offline <span class="badge">PWA</span></h1>
+    <p>Podés completar este formulario sin conexión. Las respuestas se guardan en el dispositivo y luego podés descargarlas o sincronizarlas.</p>
+    <form id="surveyForm"></form>
+    <div class="btn-row">
+      <button type="button" class="primary" id="saveBtn">Guardar respuesta offline</button>
+      <button type="button" class="secondary" id="downloadBtn">Descargar respuestas (.json)</button>
+      <button type="button" class="secondary" id="clearBtn">Borrar respuestas guardadas</button>
+    </div>
+  </div>
+
+  <script>
+    const formConfig = [{"id": "fecha", "tipo": "fecha", "pregunta": "Marca temporal", "opciones_raw": "", "obligatoria": true, "seccion": "datos personales", "notas": "fecha con día, mes y año, hora, minutos y segundos", "opciones": []}, {"id": "correo", "tipo": "email", "pregunta": "Dirección de correo electrónico", "opciones_raw": "", "obligatoria": true, "seccion": "datos personales", "notas": "tiene que ser un correo electrónico. si lo escribe mal enviar aviso \"Ingrese un correo electrónico válido\"", "opciones": []}, {"id": "q1", "tipo": "texto", "pregunta": "Apellido:", "opciones_raw": "", "obligatoria": true, "seccion": "datos personales", "notas": "", "opciones": []}, {"id": "q2", "tipo": "texto", "pregunta": "Nombre:", "opciones_raw": "", "obligatoria": true, "seccion": "datos personales", "notas": "", "opciones": []}, {"id": "q3", "tipo": "numero", "pregunta": "Número de teléfono celular (sin 0 ni 15. Ej: 3875102233):", "opciones_raw": "", "obligatoria": true, "seccion": "datos personales", "notas": "", "opciones": []}, {"id": "q4", "tipo": "número", "pregunta": "DNI (sin puntos):", "opciones_raw": "", "obligatoria": true, "seccion": "datos personales", "notas": "mín 7, máx 9, solo números, sin puntos. Si ingresa mal el dato enviar aviso \"Ingrese un número de documento válido\"", "opciones": []}, {"id": "q5", "tipo": "seleccion_unica", "pregunta": "Departamento al que pertenece la escuela en la que trabaja:", "opciones_raw": "Cachi|Cafayate|Capital|Cerrillos|Chicoana|General Güemes|General San Martín| Guachipas|La Caldera|La Viña|Metán|Orán|Rosario de la Frontera|Rosario de Lerma|San Carlos", "obligatoria": true, "seccion": "datos personales", "notas": "", "opciones": ["Cachi", "Cafayate", "Capital", "Cerrillos", "Chicoana", "General Güemes", "General San Martín", "Guachipas", "La Caldera", "La Viña", "Metán", "Orán", "Rosario de la Frontera", "Rosario de Lerma", "San Carlos"]}, {"id": "q7", "tipo": "autocompletar", "pregunta": "Nombre y número de la escuela:", "opciones_raw": "", "obligatoria": false, "seccion": "buscar en hoja escuelas nombre y número", "notas": "", "opciones": []}, {"id": "q6", "tipo": "oculta", "pregunta": "CUE de la Escuela", "opciones_raw": "", "obligatoria": false, "seccion": "completar automáticamente con el dato de cueanexo según codigo 6 según hoja escuela", "notas": "", "opciones": []}, {"id": "q8", "tipo": "seleccion_unica", "pregunta": "Cargo:", "opciones_raw": "Docente de grado|Director/a|Vicedirector/a|Directivo con grado a cargo|Personal único|Otro", "obligatoria": true, "seccion": "datos personales", "notas": "", "opciones": ["Docente de grado", "Director/a", "Vicedirector/a", "Directivo con grado a cargo", "Personal único", "Otro"]}, {"id": "q9", "tipo": "seleccion_unica", "pregunta": "Turno en que se desempeña en esta escuela:", "opciones_raw": "Mañana|Tarde|Ambos turnos| Jornada completa|Jornada extendida", "obligatoria": true, "seccion": "datos personales", "notas": "", "opciones": ["Mañana", "Tarde", "Ambos turnos", "Jornada completa", "Jornada extendida"]}, {"id": "q10", "tipo": "seleccion_unica", "pregunta": "¿En qué año comenzó a participar del programa?", "opciones_raw": "2021|2022|2023|2024|2025", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["2021", "2022", "2023", "2024", "2025"]}, {"id": "q11a1", "tipo": "seleccion_unica", "pregunta": "¿A cuántos encuentros del programa asistió este año?", "opciones_raw": "1|2|3|4|5|6", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["1", "2", "3", "4", "5", "6"]}, {"id": "q11a2", "tipo": "seleccion_unica", "pregunta": "¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):", "opciones_raw": "1|2|3|4|5|6", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["1", "2", "3", "4", "5", "6"]}, {"id": "q12", "tipo": "seleccion_unica", "pregunta": "¿Cuántos docentes de la escuela considera usted que están implementando las propuestas del programa?", "opciones_raw": "Todos|La mayoría|Algunos|Muy pocos|Ninguno", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["Todos", "La mayoría", "Algunos", "Muy pocos", "Ninguno"]}, {"id": "q13", "tipo": "seleccion_unica", "pregunta": "¿Nota cambios en la escuela a partir de la implementación del programa?", "opciones_raw": "Noto cambios pero no son positivos|No noto cambios|Noto cambios favorables", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["Noto cambios pero no son positivos", "No noto cambios", "Noto cambios favorables"]}, {"id": "q14", "tipo": "texto", "pregunta": "Si notó cambios, le pedimos que especifique a continuación:", "opciones_raw": "", "obligatoria": false, "seccion": "directivos", "notas": "", "opciones": []}, {"id": "q15", "tipo": "seleccion_unica", "pregunta": "En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?", "opciones_raw": "No tengo chicos ni chicas que me preocupen|Tengo menos del 10%|Tengo entre el 10 y el 30%| Tengo entre el 30 y el 60%| Tengo más del 60%", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["No tengo chicos ni chicas que me preocupen", "Tengo menos del 10%", "Tengo entre el 10 y el 30%", "Tengo entre el 30 y el 60%", "Tengo más del 60%"]}, {"id": "q161", "tipo": "seleccion_unica", "pregunta": "¿Enfrenta dificultades para la implementación del Plan?", "opciones_raw": "Sí | No", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["Sí", "No"]}, {"id": "q162", "tipo": "seleccion_múltiple", "pregunta": "¿Cuáles de las siguientes dificultades encuentra para la implementación del plan?", "opciones_raw": "Falta de tiempo de clase | Inasistencia de estudiantes | Dificultades de organización institucional|Alta rotación docente|Falta de acompañamiento familiar|Otra", "obligatoria": true, "seccion": "directivos", "notas": "máximo 3 opciones", "opciones": ["Falta de tiempo de clase", "Inasistencia de estudiantes", "Dificultades de organización institucional", "Alta rotación docente", "Falta de acompañamiento familiar", "Otra"]}, {"id": "q17", "tipo": "seleccion_unica", "pregunta": "Si ya ha recibido la visita de la Orientadora Pedagógica, ¿cómo evalúa el vínculo que se está estableciendo?", "opciones_raw": "Muy bueno|Adecuado|Nada adecuado|Todavía no he recibido la visita de la Orientadora Pedagógica|Otra", "obligatoria": true, "seccion": "directivos", "notas": "si elige “Otro” abrir campo libre", "opciones": ["Muy bueno", "Adecuado", "Nada adecuado", "Todavía no he recibido la visita de la Orientadora Pedagógica", "Otra"]}, {"id": "q18", "tipo": "seleccion_múltiple", "pregunta": "¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.", "opciones_raw": "Aportan materiales y diferentes recursos para utilizar con los alumnos|Orientan y apoyan|Dan herramientas para trabajar en el aula| Tienen buena predisposición|Nos mantiene conectaods con el plan|Ninguna", "obligatoria": true, "seccion": "directivos", "notas": "máximo 3 opciones", "opciones": ["Aportan materiales y diferentes recursos para utilizar con los alumnos", "Orientan y apoyan", "Dan herramientas para trabajar en el aula", "Tienen buena predisposición", "Nos mantiene conectaods con el plan", "Ninguna"]}, {"id": "q19", "tipo": "escala", "pregunta": "¿Considera que el programa aporta a su formación profesional? ¿En qué medida?", "opciones_raw": "1|2|3|4|5", "obligatoria": true, "seccion": "directivos", "notas": "", "opciones": ["1", "2", "3", "4", "5"]}, {"id": "q20", "tipo": "seleccion_unica", "pregunta": "Grado que tiene a cargo:", "opciones_raw": "Primero|Segundo|Tercero|Plurigrado/Pluriaño", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["Primero", "Segundo", "Tercero", "Plurigrado/Pluriaño"]}, {"id": "q21a1", "tipo": "seleccion_unica", "pregunta": "¿A cuántos encuentros del programa asistió este año?", "opciones_raw": "1|2|3|4|5|6", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["1", "2", "3", "4", "5", "6"]}, {"id": "q21a2", "tipo": "seleccion_unica", "pregunta": "¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):", "opciones_raw": "1|2|3|4|5|6", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["1", "2", "3", "4", "5", "6"]}, {"id": "q22", "tipo": "seleccion_unica", "pregunta": "Si tiene plurigrado, especifique qué grados están agrupados:", "opciones_raw": "Primero|Segundo|Tercero|Cuarto|Quinto|Sexto", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["Primero", "Segundo", "Tercero", "Cuarto", "Quinto", "Sexto"]}, {"id": "q23", "tipo": "seleccion_unica", "pregunta": "¿En qué año comenzó a participar del programa?", "opciones_raw": "2021|2022|2023|2024|2025", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["2021", "2022", "2023", "2024", "2025"]}, {"id": "q24", "tipo": "seleccion_unica", "pregunta": "En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?", "opciones_raw": "No tengo chicos ni chicas que me preocupen|Tengo menos del 10%|Tengo entre el 10 y el 30%| Tengo entre el 30 y el 60%| Tengo más del 60%", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["No tengo chicos ni chicas que me preocupen", "Tengo menos del 10%", "Tengo entre el 10 y el 30%", "Tengo entre el 30 y el 60%", "Tengo más del 60%"]}, {"id": "q25", "tipo": "seleccion_unica", "pregunta": "¿Cuántas veces por semana realizan las actividades de \"Esta semana escribimos\"?", "opciones_raw": "No realizamos las actividades de \"Esta semana escribimos\"|1 vez por semana|2 veces por semana|3 veces por semana| Más de 3 veces por semana|No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["No realizamos las actividades de \"Esta semana escribimos\"", "1 vez por semana", "2 veces por semana", "3 veces por semana", "Más de 3 veces por semana", "No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)"]}, {"id": "q26", "tipo": "seleccion_unica", "pregunta": "¿Cuánto tiempo les toma realizar las actividades de \"Esta semana escribimos\"?", "opciones_raw": "Menos de 10 minutos|Entre 10 y 30 minutos|Entre 30 y 60 minutos|Más de 60 minutos|No corresponde", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["Menos de 10 minutos", "Entre 10 y 30 minutos", "Entre 30 y 60 minutos", "Más de 60 minutos", "No corresponde"]}, {"id": "q27", "tipo": "seleccion_unica", "pregunta": "¿Cuánto cree que cambió su manera de enseñar desde que participa del programa?", "opciones_raw": "Mucho|Bastante|Poco|Nada", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["Mucho", "Bastante", "Poco", "Nada"]}, {"id": "q271", "tipo": "seleccion_unica", "pregunta": "¿Enfrenta dificultades para la implementación del Plan?", "opciones_raw": "Sí | No", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["Sí", "No"]}, {"id": "q272", "tipo": "texto", "pregunta": "¿Puede especificar cuáles?", "opciones_raw": "", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": []}, {"id": "q28", "tipo": "seleccion_unica", "pregunta": "¿Comparte material audiovisual con las familias a través de WhatsApp?", "opciones_raw": "Siempre|Algunas veces|Nunca|Otro", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["Siempre", "Algunas veces", "Nunca", "Otro"]}, {"id": "q29", "tipo": "seleccion_unica", "pregunta": "¿Utilizan en el aula el material complementario?", "opciones_raw": "Sí | No", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["Sí", "No"]}, {"id": "q30", "tipo": "seleccion_unica", "pregunta": "¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.", "opciones_raw": "Aportan materiales y diferentes recursos para utilizar con los alumnos|Orientan y apoyan|Dan herramientas para trabajar en el aula| Tienen buena predisposición|Nos mantiene conectaods con el plan|Ninguna", "obligatoria": true, "seccion": "docentes", "notas": "máximo 3 opciones", "opciones": ["Aportan materiales y diferentes recursos para utilizar con los alumnos", "Orientan y apoyan", "Dan herramientas para trabajar en el aula", "Tienen buena predisposición", "Nos mantiene conectaods con el plan", "Ninguna"]}, {"id": "q31", "tipo": "escala", "pregunta": "¿Considera que el programa aporta a su formación profesional? ¿En qué medida?", "opciones_raw": "1|2|3|4|5", "obligatoria": true, "seccion": "docentes", "notas": "", "opciones": ["1", "2", "3", "4", "5"]}, {"id": "q32", "tipo": "seleccion_unica", "pregunta": "¿En qué año comenzó a participar del programa?", "opciones_raw": "2021|2022|2023|2024|2025", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["2021", "2022", "2023", "2024", "2025"]}, {"id": "q33a1", "tipo": "seleccion_unica", "pregunta": "¿A cuántos encuentros del programa asistió este año?", "opciones_raw": "1|2|3|4|5|6", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["1", "2", "3", "4", "5", "6"]}, {"id": "q33a2", "tipo": "seleccion_unica", "pregunta": "¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):", "opciones_raw": "1|2|3|4|5|6", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["1", "2", "3", "4", "5", "6"]}, {"id": "q34", "tipo": "seleccion_unica", "pregunta": "¿Nota cambios en la escuela a partir de la implementación del programa?", "opciones_raw": "Noto cambios pero no son positivos|No noto cambios|Noto cambios favorables", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Noto cambios pero no son positivos", "No noto cambios", "Noto cambios favorables"]}, {"id": "q35", "tipo": "texto", "pregunta": "Si notó cambios, le pedimos que especifique a continuación:", "opciones_raw": "", "obligatoria": false, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": []}, {"id": "q361", "tipo": "selección_unica", "pregunta": "¿Enfrenta dificultades para la implementación del Plan?", "opciones_raw": "Sí | No", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Sí", "No"]}, {"id": "q362", "tipo": "selección_multiple", "pregunta": "¿Cuáles de las siguientes dificultades encuentra para la implementación del plan?", "opciones_raw": "Falta de tiempo de clase | Inasistencia de estudiantes | Dificultades de organización institucional|Alta rotación docente|Falta de acompañamiento familiar|Otra", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Falta de tiempo de clase", "Inasistencia de estudiantes", "Dificultades de organización institucional", "Alta rotación docente", "Falta de acompañamiento familiar", "Otra"]}, {"id": "q37", "tipo": "selección_unica", "pregunta": "Si ya ha recibido la visita de la Orientadora Pedagógica, ¿Cómo evalúa el vínculo que se está estableciendo?", "opciones_raw": "Muy bueno|Adecuado|Nada adecuado|Todavía no he recibido la visita de la Orientadora Pedagógica|Otra", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Muy bueno", "Adecuado", "Nada adecuado", "Todavía no he recibido la visita de la Orientadora Pedagógica", "Otra"]}, {"id": "q38", "tipo": "selección_unica", "pregunta": "Grado que tiene a cargo:", "opciones_raw": "Primero|Segundo|Tercero|Plurigrado/Pluriaño/Personal único", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Primero", "Segundo", "Tercero", "Plurigrado/Pluriaño/Personal único"]}, {"id": "q39", "tipo": "selección_unica", "pregunta": "Si tiene plurigrado, especifique qué grados están agrupados:", "opciones_raw": "Primero|Segundo|Tercero|CUarto|Quinto|Sexto", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Primero", "Segundo", "Tercero", "CUarto", "Quinto", "Sexto"]}, {"id": "q40", "tipo": "selección_unica", "pregunta": "En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?", "opciones_raw": "No tengo chicos ni chicas que me preocupen|Tengo menos del 10%|Tengo entre el 10 y el 30%| Tengo entre el 30 y el 60%| Tengo más del 60%", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["No tengo chicos ni chicas que me preocupen", "Tengo menos del 10%", "Tengo entre el 10 y el 30%", "Tengo entre el 30 y el 60%", "Tengo más del 60%"]}, {"id": "q41", "tipo": "selección_unica", "pregunta": "¿Cuántas veces por semana realizan las actividades de \"Esta semana escribimos\"?", "opciones_raw": "No realizamos las actividades de \"Esta semana escribimos\"|1 vez por semana|2 veces por semana|3 veces por semana| Más de 3 veces por semana|No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["No realizamos las actividades de \"Esta semana escribimos\"", "1 vez por semana", "2 veces por semana", "3 veces por semana", "Más de 3 veces por semana", "No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)"]}, {"id": "q42", "tipo": "selección_unica", "pregunta": "¿Cuánto tiempo les toma realizar las actividades de \"Esta semana escribimos\"?", "opciones_raw": "Menos de 10 minutos|Entre 10 y 30 minutos|Entre 30 y 60 minutos|Más de 60 minutos|No corresponde", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Menos de 10 minutos", "Entre 10 y 30 minutos", "Entre 30 y 60 minutos", "Más de 60 minutos", "No corresponde"]}, {"id": "q43", "tipo": "selección_unica", "pregunta": "¿Cuánto cree que cambió su manera de enseñar desde que participa del programa?", "opciones_raw": "Mucho|Bastante|Poco|Nada", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Mucho", "Bastante", "Poco", "Nada"]}, {"id": "q44", "tipo": "selección_unica", "pregunta": "¿Comparte material audiovisual con las familias a través de WhatsApp?", "opciones_raw": "Siempre|Algunas veces|Nunca|Otro", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Siempre", "Algunas veces", "Nunca", "Otro"]}, {"id": "q45", "tipo": "selección_unica", "pregunta": "¿Utilizan en el aula el material complementario?", "opciones_raw": "Si|No", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Si", "No"]}, {"id": "q46", "tipo": "selección_unica", "pregunta": "¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.", "opciones_raw": "Aportan materiales y diferentes recursos para utilizar con los alumnos|Orientan y apoyan|Dan herramientas para trabajar en el aula| Tienen buena predisposición|Nos mantiene conectaods con el plan|Ninguna", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["Aportan materiales y diferentes recursos para utilizar con los alumnos", "Orientan y apoyan", "Dan herramientas para trabajar en el aula", "Tienen buena predisposición", "Nos mantiene conectaods con el plan", "Ninguna"]}, {"id": "q47", "tipo": "escala", "pregunta": "¿Considera que el programa aporta a su formación profesional? ¿En qué medida?", "opciones_raw": "1|2|3|4|5", "obligatoria": true, "seccion": "Directivos con grado a cargo", "notas": "", "opciones": ["1", "2", "3", "4", "5"]}, {"id": "q480", "tipo": "selección_unica", "pregunta": "¿Asistió a un encuentro de capacitación docente este mes?", "opciones_raw": "Sí | No", "obligatoria": true, "seccion": "evaluación del encuentro", "notas": "", "opciones": ["Sí", "No"]}, {"id": "q48a", "tipo": "escala", "pregunta": "Contenidos trabajados", "opciones_raw": "1|2|3|4|5", "obligatoria": true, "seccion": "evaluación del encuentro", "notas": "", "opciones": ["1", "2", "3", "4", "5"]}, {"id": "q48b", "tipo": "escala", "pregunta": "Claridad en las explicaciones", "opciones_raw": "1|2|3|4|5", "obligatoria": true, "seccion": "evaluación del encuentro", "notas": "", "opciones": ["1", "2", "3", "4", "5"]}, {"id": "q48c", "tipo": "escala", "pregunta": "Actitud de las capacitadoras", "opciones_raw": "1|2|3|4|5", "obligatoria": true, "seccion": "evaluación del encuentro", "notas": "", "opciones": ["1", "2", "3", "4", "5"]}, {"id": "q48d", "tipo": "escala", "pregunta": "Uso del tiempo", "opciones_raw": "1|2|3|4|5", "obligatoria": true, "seccion": "evaluación del encuentro", "notas": "", "opciones": ["1", "2", "3", "4", "5"]}, {"id": "q49", "tipo": "texto", "pregunta": "Comentarios y observaciones:", "opciones_raw": "", "obligatoria": false, "seccion": "evaluación del encuentro", "notas": "", "opciones": []}];
+    const escuelasData = [{"CUE - ANEXO": "660000400", "Número escuela": "4042", "Nombre escuela": "IV CENTENARIO DE LA FUNDACION DE SALTA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660000500", "Número escuela": "4104", "Nombre escuela": "PACHI GORRITI ", "Categoría": "Segunda", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660001200", "Número escuela": "4001", "Nombre escuela": "JUAN BAUTISTA ALBERDI ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660013930", "Número escuela": "4794", "Nombre escuela": "Colonia Santa Rosa", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660037300", "Número escuela": "4453", "Nombre escuela": "Virgen de la Merced", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660043100", "Número escuela": "4294", "Nombre escuela": "Rdo. Padre Antonio D´Nilo", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660043400", "Número escuela": "4628", "Nombre escuela": "Dr. José Benito Graña", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660065400", "Número escuela": "4237", "Nombre escuela": "Maria Ernestina Gutierrez", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660065500", "Número escuela": "4108", "Nombre escuela": "9 de Julio", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660091400", "Número escuela": "4213", "Nombre escuela": "José Gómez Martinez", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660097300", "Número escuela": "4109", "Nombre escuela": "El Señor y Virgen del Milagro", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660002900", "Número escuela": "4015", "Nombre escuela": "REMEDIOS ESCALADA DE SAN MARTIN ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660003000", "Número escuela": "4010", "Nombre escuela": "SANTA MARIA EUFRASIA PELLETIER ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660004400", "Número escuela": "4016", "Nombre escuela": "MAESTRA JACOBA SARAVIA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660004600", "Número escuela": "4135", "Nombre escuela": "MONSEÑOR ROBERTO JOSE TAVELLA ", "Categoría": "Primera", "Departamento": "GRAL. GÜEMES"}, {"CUE - ANEXO": "660005000", "Número escuela": "4101", "Nombre escuela": "MARTINA SILVA DE GURRUCHAGA ", "Categoría": "Primera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660005400", "Número escuela": "4361", "Nombre escuela": "DOCTOR MARTIN RAUL MAINOLI ", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660062600", "Número escuela": "8074", "Nombre escuela": "Colegio Nuestra Sra de Luján", "Categoría": "Tercera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660020600", "Número escuela": "4415", "Nombre escuela": "ESCUELA Nª 4415 ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660006500", "Número escuela": "4012", "Nombre escuela": "PRESIDENTE JULIO ARGENTINO ROCA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660033400", "Número escuela": "4129", "Nombre escuela": "FRAY JUSTO SANTA MARIA DE ORO ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660007300", "Número escuela": "4338", "Nombre escuela": "GENERAL JUSTO JOSE DE URQUIZA ", "Categoría": "Primera", "Departamento": "GRAL. GÜEMES"}, {"CUE - ANEXO": "660007500", "Número escuela": "4473", "Nombre escuela": "HILARIO ASCASUBI ", "Categoría": "Primera", "Departamento": "GRAL. GÜEMES"}, {"CUE - ANEXO": "660007600", "Número escuela": "4693", "Nombre escuela": "PROFESORA CLARA GUTIEZ ", "Categoría": "Primera", "Departamento": "GRAL. GÜEMES"}, {"CUE - ANEXO": "660159800", "Número escuela": "4850", "Nombre escuela": "Francisco Nuestro Papa", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660161100", "Número escuela": "4853", "Nombre escuela": "29 de Junio", "Categoría": "Tercera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660008500", "Número escuela": "4479", "Nombre escuela": "ELIECER SALGADO ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660008200", "Número escuela": "4102", "Nombre escuela": "CARMEN SALAS ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660008300", "Número escuela": "4523", "Nombre escuela": "ESCUELA Nº 4523", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660008800", "Número escuela": "4103", "Nombre escuela": "DR.LUIS GUEMES ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660014800", "Número escuela": "4417", "Nombre escuela": "REP. DE LA INDIA ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660014900", "Número escuela": "4410", "Nombre escuela": "ESCUELA Nª 4410 ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660010300", "Número escuela": "4044", "Nombre escuela": "FRAY HONORATO PISTOIA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660010500", "Número escuela": "4638", "Nombre escuela": "FRAY LUIS BELTRAN ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660010800", "Número escuela": "4145", "Nombre escuela": "Robustiano Patròn Costas", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660010900", "Número escuela": "4139", "Nombre escuela": "Osvaldo Pos", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660011000", "Número escuela": "4434", "Nombre escuela": "MARIA ELVIRA REYES DE CAMPOS", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660011100", "Número escuela": "4046", "Nombre escuela": "CESAR FERMIN PERDIGUERO ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660034600", "Número escuela": "4435", "Nombre escuela": "ESCUELA Nº 4435 ", "Categoría": "Cuarta", "Departamento": "METÁN"}, {"CUE - ANEXO": "660011900", "Número escuela": "4020", "Nombre escuela": "GENERAL JUSTO JOSE DE URQUIZA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660034700", "Número escuela": "4392", "Nombre escuela": "NTRA SRA.DEL ROSARIO DE SAN NICOLAS ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660012200", "Número escuela": "4694", "Nombre escuela": "SAN LEONARDO MURIALDO ", "Categoría": "Segunda", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660015000", "Número escuela": "4130", "Nombre escuela": "ALBERGUE BATALLA DE SALTA ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660015200", "Número escuela": "4336", "Nombre escuela": "SAN LORENZO", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660015300", "Número escuela": "4413", "Nombre escuela": "JUAN BAUTISTA CABRAL ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660015400", "Número escuela": "4447", "Nombre escuela": "ESCUELA Nª 4447 ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660023900", "Número escuela": "4593", "Nombre escuela": "ESCUELA Nª 4593 ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660024000", "Número escuela": "4116", "Nombre escuela": "CESAR ALBERTO TORINO ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660028400", "Número escuela": "4581", "Nombre escuela": "SAN ANTONIO DE PADUA ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660015100", "Número escuela": "4258", "Nombre escuela": "NUESTRA SEÑORA DEL ROSARIO ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660028600", "Número escuela": "4509", "Nombre escuela": "JUAN FRANCISCO SALINAS ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660028700", "Número escuela": "4412", "Nombre escuela": "ESCUELA N° 4412 ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660083700", "Número escuela": "4395", "Nombre escuela": "FUERZA AEREA ARGENTINA ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660088400", "Número escuela": "4409", "Nombre escuela": "VIRGEN DE LA MONTAÑA ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660088600", "Número escuela": "4633", "Nombre escuela": "CRISTO REDENTOR ", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660038700", "Número escuela": "4414", "Nombre escuela": "POSTA DE YATASTO ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660041200", "Número escuela": "4589", "Nombre escuela": "REGIMIENTO GRANADEROS A CABALLO ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660044700", "Número escuela": "4484", "Nombre escuela": "FRANCISCO NAZARIO CATALAN ", "Categoría": "Cuarta", "Departamento": "METÁN"}, {"CUE - ANEXO": "660045000", "Número escuela": "4337", "Nombre escuela": "PORTAVIONES A.R.A. 25 DE MAYO ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660055600", "Número escuela": "4131", "Nombre escuela": "CONSTANCIO CARLOS VIGIL ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660148100", "Número escuela": "4810", "Nombre escuela": "ESCUELA Nº 4810", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660097800", "Número escuela": "4641", "Nombre escuela": "JUAN VUCETICH ", "Categoría": "Segunda", "Departamento": "METÁN"}, {"CUE - ANEXO": "660033300", "Número escuela": "4246", "Nombre escuela": "ANA SAJAREVICH DE FERNANDEZ ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660034500", "Número escuela": "4659", "Nombre escuela": "SAN JOSE DE CALASANZ ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660027400", "Número escuela": "4008", "Nombre escuela": "GRAL BARTOLOME MITRE ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660034800", "Número escuela": "4340", "Nombre escuela": "ANDREA AZUCENA CARENZO DE VILLA ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660028100", "Número escuela": "4673", "Nombre escuela": "GRAL DE BRIGADA (RE) JORGE EDGAR LEAL", "Categoría": "Segunda", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660055200", "Número escuela": "4087", "Nombre escuela": "CANONIGO JUAN IGNACIO DE GORRITI ", "Categoría": "Segunda", "Departamento": "METÁN"}, {"CUE - ANEXO": "660028500", "Número escuela": "4639", "Nombre escuela": "PROFESOR AMELIO RONCO CERUTI", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660058900", "Número escuela": "4406", "Nombre escuela": "NUESTRA SEÑORA DEL VALLE ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660065800", "Número escuela": "4086", "Nombre escuela": "MAGDALENA GUEMES DE TEJADA ", "Categoría": "Primera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660035900", "Número escuela": "4366", "Nombre escuela": "VIRGEN DEL VALLE ", "Categoría": "Cuarta", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660030100", "Número escuela": "4665", "Nombre escuela": "Jesús de la Divina Misericordia", "Categoría": "Segunda", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660030500", "Número escuela": "4250", "Nombre escuela": "Mateo Ríos", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660030700", "Número escuela": "4069", "Nombre escuela": "GOBERNADOR MANUEL SOLA", "Categoría": "Primera", "Departamento": "CERRILLOS"}, {"CUE - ANEXO": "660031100", "Número escuela": "4319", "Nombre escuela": "MARCO SASTRE ", "Categoría": "Segunda", "Departamento": "CERRILLOS"}, {"CUE - ANEXO": "660091200", "Número escuela": "4261", "Nombre escuela": "MONS.DIEGO GUTIERREZ PEDRAZA ", "Categoría": "Cuarta", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660031400", "Número escuela": "4022", "Nombre escuela": "DOCTOR BENJAMIN ZORRILLA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660031500", "Número escuela": "4021", "Nombre escuela": "20 DE FEBRERO DE 1813 ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660031700", "Número escuela": "4018", "Nombre escuela": "DR.JOSE VICENTE SOLA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660031900", "Número escuela": "4643", "Nombre escuela": "DR.JOAQUIN CASTELLANOS ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660032300", "Número escuela": "4586", "Nombre escuela": "Lidia Rosa de Sidorenko", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660032400", "Número escuela": "4275", "Nombre escuela": "Osvaldo Burela", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660033000", "Número escuela": "4098", "Nombre escuela": "Cornelio Saavedra", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660091300", "Número escuela": "4355", "Nombre escuela": "MARIA LUISA LOPEZ ", "Categoría": "Tercera", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660006100", "Número escuela": "4480", "Nombre escuela": "CHAIN WEISMAN", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660033600", "Número escuela": "4398", "Nombre escuela": "GENERAL BARTOLOME MITRE ", "Categoría": "Primera", "Departamento": "R. DE LERMA"}, {"CUE - ANEXO": "660034100", "Número escuela": "4330", "Nombre escuela": "JOSE EUSTAQUIO ALDERETE ", "Categoría": "Tercera", "Departamento": "R. DE LERMA"}, {"CUE - ANEXO": "660034300", "Número escuela": "4310", "Nombre escuela": "Humberto Milanessi", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660007200", "Número escuela": "4419", "Nombre escuela": "Juan Bautista Cabral", "Categoría": "Segunda", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660011200", "Número escuela": "8036", "Nombre escuela": "Evaristo Piñón Arias", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660005600", "Número escuela": "4053", "Nombre escuela": "GRAL.RUDECINDO ALVARADO ", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660022300", "Número escuela": "4540", "Nombre escuela": "Lola Mora", "Categoría": "Tercera", "Departamento": "LA CANDELARIA"}, {"CUE - ANEXO": "660035400", "Número escuela": "4634", "Nombre escuela": "SUBMARINO A.R.A. SALTA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660035600", "Número escuela": "4035", "Nombre escuela": "PROFESOR ALEJANDRO GAUFFIN ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660012000", "Número escuela": "4705", "Nombre escuela": "REPUBLICA DE COLOMBIA-", "Categoría": "Primera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660022500", "Número escuela": "4350", "Nombre escuela": "2 DE FEBRERO", "Categoría": "Tercera", "Departamento": "LA CANDELARIA"}, {"CUE - ANEXO": "660027500", "Número escuela": "4027", "Nombre escuela": "DOCTOR BENJAMIN DAVALOS Y AVILES", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660022600", "Número escuela": "4502", "Nombre escuela": "Cristina C. de Chamorro", "Categoría": "Segunda", "Departamento": "LA CANDELARIA"}, {"CUE - ANEXO": "660022700", "Número escuela": "4182", "Nombre escuela": "Combate de San Lorenzo", "Categoría": "Tercera", "Departamento": "LA CANDELARIA"}, {"CUE - ANEXO": "660087400", "Número escuela": "4425", "Nombre escuela": "RVDO.PADRE RAFAEL SARAVIA", "Categoría": "Tercera", "Departamento": "LA CANDELARIA"}, {"CUE - ANEXO": "660038900", "Número escuela": "4099", "Nombre escuela": "DR.FRANCISCO DE GURRUCHAGA ", "Categoría": "Primera", "Departamento": "R. DE LERMA"}, {"CUE - ANEXO": "660039100", "Número escuela": "4394", "Nombre escuela": "CORONEL VICENTE TORINO ", "Categoría": "Segunda", "Departamento": "R. DE LERMA"}, {"CUE - ANEXO": "660039400", "Número escuela": "4241", "Nombre escuela": "FRAGATA LIBERTAD ", "Categoría": "Segunda", "Departamento": "R. DE LERMA"}, {"CUE - ANEXO": "660031200", "Número escuela": "4320", "Nombre escuela": "SAN AGUSTIN", "Categoría": "Segunda", "Departamento": "CERRILLOS"}, {"CUE - ANEXO": "660040600", "Número escuela": "4096", "Nombre escuela": "Coronel Vicente de Uriburu", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660040800", "Número escuela": "4496", "Nombre escuela": "LIDIA Manuela Cardozo de Mariño", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660041100", "Número escuela": "4696", "Nombre escuela": "Daniel León", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660087500", "Número escuela": "4220", "Nombre escuela": "El Pantanillo", "Categoría": "Tercera", "Departamento": "LA CANDELARIA"}, {"CUE - ANEXO": "660041400", "Número escuela": "4029", "Nombre escuela": "DR. NICOLAS AVELLANEDA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660041600", "Número escuela": "4048", "Nombre escuela": "PROVINCIA DE SALTA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660041700", "Número escuela": "4049", "Nombre escuela": "INDEPENDENCIA NACIONAL ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660041900", "Número escuela": "4691", "Nombre escuela": "ALMIRANTE CRISTOBAL COLON ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660042000", "Número escuela": "4026", "Nombre escuela": "DOCTOR DELFIN LEGUIZAMON ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660042100", "Número escuela": "4033", "Nombre escuela": "REPUBLICA ARGENTINA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660087700", "Número escuela": "4079", "Nombre escuela": "Dr. Pedro Antonio Arias de Velázquez", "Categoría": "Segunda", "Departamento": "LA CANDELARIA"}, {"CUE - ANEXO": "660043000", "Número escuela": "4185", "Nombre escuela": "Teniente Gobernador Benjamín Villafañe", "Categoría": "Tercera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660035800", "Número escuela": "4427", "Nombre escuela": "JOSEFA FRIAS DE ARAMBURU ", "Categoría": "Segunda", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660036100", "Número escuela": "4411", "Nombre escuela": "GRAL. GREGORIO VELEZ", "Categoría": "Tercera", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660043500", "Número escuela": "4019", "Nombre escuela": "PRESIDENTE JOSE EVARISTO URIBURU ", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660036000", "Número escuela": "8134", "Nombre escuela": "Escuela Albergue San Agustin", "Categoría": "Tercera", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660040300", "Número escuela": "4460", "Nombre escuela": "General Manuel Blegrano", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660043900", "Número escuela": "4654", "Nombre escuela": "Coronel Juan Pascual Pringles", "Categoría": "Tercera", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660044200", "Número escuela": "4369", "Nombre escuela": "CARMEN GUEMES DE LATORRE", "Categoría": "Tercera", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660045100", "Número escuela": "4375", "Nombre escuela": "DR. BERNARDO FRIAS ", "Categoría": "Tercera", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660045200", "Número escuela": "4037", "Nombre escuela": "MARIQUITA SANCHEZ DE THOMPSON ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660045300", "Número escuela": "4692", "Nombre escuela": "MARIA DEL ROSARIO DE SAN NICOLAS ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660045500", "Número escuela": "4003", "Nombre escuela": "DOCTOR JOAQUIN CASTELLANOS ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660046200", "Número escuela": "4688", "Nombre escuela": "NUESTRA SEÑORA DE LA ASUNCION ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660046700", "Número escuela": "4317", "Nombre escuela": "TTE.CORONEL CALIXTO GAUNA ", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660046800", "Número escuela": "4055", "Nombre escuela": "JOSE MANUEL ESTRADA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660047000", "Número escuela": "4024", "Nombre escuela": "PREBISTERO DOCTOR JUAN FRANCISCO DE CASTRO ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660047200", "Número escuela": "4274", "Nombre escuela": "MONSEÑOR PEDRO REGINALDO LIRA ", "Categoría": "Cuarta", "Departamento": "LA CALDERA"}, {"CUE - ANEXO": "660089600", "Número escuela": "4380", "Nombre escuela": "ANTONIO CLERICO ", "Categoría": "Segunda", "Departamento": "METÁN"}, {"CUE - ANEXO": "660047500", "Número escuela": "4118", "Nombre escuela": "Dr. Gustavo Martínez Zuviría", "Categoría": "Cuarta", "Departamento": "LA CALDERA"}, {"CUE - ANEXO": "660047600", "Número escuela": "4077", "Nombre escuela": "JUANA MORO DE LOPEZ ", "Categoría": "Segunda", "Departamento": "LA CALDERA"}, {"CUE - ANEXO": "660047700", "Número escuela": "4005", "Nombre escuela": "JUAN CARLOS DAVALOS ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660049800", "Número escuela": "4281", "Nombre escuela": "MANUEL J.CASTILLA ", "Categoría": "Primera", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660050000", "Número escuela": "8020", "Nombre escuela": "COOPERATIVA DE PREVISION DE SERVICIOS EDUCACIONALES CHICOANA LTDA", "Categoría": "Segunda", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660050200", "Número escuela": "4636", "Nombre escuela": "CORONEL LUIS BURELA Y SAAVEDRA ", "Categoría": "Segunda", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660050300", "Número escuela": "4432", "Nombre escuela": "SAN JOSE DE LA VIÑA ", "Categoría": "Tercera", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660050600", "Número escuela": "4017", "Nombre escuela": "PRESIDENTE DOMINGO FAUSTINO SARMIENTO ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660051000", "Número escuela": "4036", "Nombre escuela": "DOCTOR AUGUSTO RAUL CORTAZAR ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660051100", "Número escuela": "4050", "Nombre escuela": "CLARA SARAVIA LINARES DE ARIAS ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660051300", "Número escuela": "4013", "Nombre escuela": "MIGUEL DE CERVANTES SAAVEDRA", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660051600", "Número escuela": "8083", "Nombre escuela": "Dr. Raúl Goytia", "Categoría": "Segunda", "Departamento": "CAPITAL "}, {"CUE - ANEXO": "660052100", "Número escuela": "4034", "Nombre escuela": "SANTA LUCIA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660052200", "Número escuela": "4006", "Nombre escuela": "AMERICA LATINA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660052300", "Número escuela": "4646", "Nombre escuela": "PAULA ALBARRACIN ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660052700", "Número escuela": "4025", "Nombre escuela": "DR. MIGUEL ORTIZ ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660052900", "Número escuela": "4043", "Nombre escuela": "MONSEÑOR CARLOS MARIANO PEREZ ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660053600", "Número escuela": "4704", "Nombre escuela": "EX ESCUELA NORMAL SUPERIOR ", "Categoría": "Primera", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660053900", "Número escuela": "8035", "Nombre escuela": "Dr. Ernesto Solá", "Categoría": "Tercera", "Departamento": "CERRILLOS"}, {"CUE - ANEXO": "660047300", "Número escuela": "4640", "Nombre escuela": "CAMINO DEL INCA ", "Categoría": "Tercera", "Departamento": "LA CALDERA"}, {"CUE - ANEXO": "660042700", "Número escuela": "4094", "Nombre escuela": "Libertador General San Martin", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660013100", "Número escuela": "4653", "Nombre escuela": "TRISTAN LOPEZ ", "Categoría": "Cuarta", "Departamento": "GUACHIPAS"}, {"CUE - ANEXO": "660013200", "Número escuela": "4352", "Nombre escuela": "PONTIFICE JUAN PABLO II ", "Categoría": "Cuarta", "Departamento": "GUACHIPAS"}, {"CUE - ANEXO": "660055900", "Número escuela": "8073", "Nombre escuela": "Nuestra Señora de la Candelaria", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660056000", "Número escuela": "4038", "Nombre escuela": "ARMADA NACIONAL ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660056100", "Número escuela": "4040", "Nombre escuela": "MERCEDES DE LOS MILAGROS LAVIN ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660056700", "Número escuela": "4004", "Nombre escuela": "CORDOBA", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660056800", "Número escuela": "8065", "Nombre escuela": "Escuela Parroquial Martin Fierro", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660056900", "Número escuela": "4011", "Nombre escuela": "BERNARDINO RIVADAVIA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660057100", "Número escuela": "4304", "Nombre escuela": "NUESTRA SEÑORA DEL CARMEN ", "Categoría": "Tercera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660013300", "Número escuela": "4075", "Nombre escuela": "DR. FRANCISCO J.ORTIZ ", "Categoría": "Cuarta", "Departamento": "GUACHIPAS"}, {"CUE - ANEXO": "660058400", "Número escuela": "4371", "Nombre escuela": "DOCTOR JORGE ALBERTO TREVISAN PALACIOS", "Categoría": "Tercera", "Departamento": "CERRILLOS"}, {"CUE - ANEXO": "660054800", "Número escuela": "4084", "Nombre escuela": "JUANA MANUELA GORRITI ", "Categoría": "Primera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660016500", "Número escuela": "4429", "Nombre escuela": "COMBATE LA VUELTA DE OBLIGADO ", "Categoría": "Primera", "Departamento": "CACHI"}, {"CUE - ANEXO": "660059200", "Número escuela": "4078", "Nombre escuela": "DOCTOR BERNABE LOPEZ ", "Categoría": "Segunda", "Departamento": "LA CALDERA"}, {"CUE - ANEXO": "660059400", "Número escuela": "4041", "Nombre escuela": "INGENIERO RAFAEL PATRICIO SOSA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660059500", "Número escuela": "4032", "Nombre escuela": "LEOPOLDO LUGONES ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660059600", "Número escuela": "4031", "Nombre escuela": "PEDRO BONIFACIO PALACIOS - Almafuerte", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660059900", "Número escuela": "4023", "Nombre escuela": "EJERCITO ARGENTINO ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660060000", "Número escuela": "4642", "Nombre escuela": "CAMPAÑA DEL DESIERTO ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660060400", "Número escuela": "4030", "Nombre escuela": "DOCTOR MARIANO MORENO ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660060600", "Número escuela": "4318", "Nombre escuela": "GRAL JOSE DE SAN MARTIN ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660061100", "Número escuela": "4014", "Nombre escuela": "SAN JOSE ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660023100", "Número escuela": "4074", "Nombre escuela": "DR.BERNARDO FRIAS ", "Categoría": "Segunda", "Departamento": "GUACHIPAS"}, {"CUE - ANEXO": "660076800", "Número escuela": "4081", "Nombre escuela": "CORONEL JOSE MOLDES", "Categoría": "Primera", "Departamento": "LA VIÑA"}, {"CUE - ANEXO": "660077500", "Número escuela": "4063", "Nombre escuela": "DR. VICTORINO DE LA PLAZA", "Categoría": "Primera", "Departamento": "CACHI"}, {"CUE - ANEXO": "660063200", "Número escuela": "4563", "Nombre escuela": "DR.INDALECIO GOMEZ ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660063500", "Número escuela": "4316", "Nombre escuela": "JUANA AZURDUY DE PADILLA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660078300", "Número escuela": "4349", "Nombre escuela": "CORONEL BONIFACIO RUIZ DE LOS LLANOS ", "Categoría": "Tercera", "Departamento": "CACHI"}, {"CUE - ANEXO": "660064300", "Número escuela": "4360", "Nombre escuela": "SAN JUAN BAUTISTA ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660094200", "Número escuela": "8091", "Nombre escuela": "Instituto San Bernardo", "Categoría": "Tercera", "Departamento": "LA VIÑA"}, {"CUE - ANEXO": "660099800", "Número escuela": "4080", "Nombre escuela": "GENERAL DIONISIO DE PUCH ", "Categoría": "Segunda", "Departamento": "LA VIÑA"}, {"CUE - ANEXO": "660064800", "Número escuela": "4273", "Nombre escuela": "Dr. Arturo Illía", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660064900", "Número escuela": "4271", "Nombre escuela": "Fray Aristidis Nibi", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660099900", "Número escuela": "4333", "Nombre escuela": "ESCUELA N° 4333 ", "Categoría": "Tercera", "Departamento": "LA VIÑA"}, {"CUE - ANEXO": "660001800", "Número escuela": "4181", "Nombre escuela": "SANTO DOMINGO SAVIO ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660058800", "Número escuela": "4082", "Nombre escuela": "GENERAL MANUEL BELGRANO ", "Categoría": "Primera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660002000", "Número escuela": "4288", "Nombre escuela": "CORONEL ENRIQUE VIDT ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660065700", "Número escuela": "4706", "Nombre escuela": "PROFESOR EVELIO MELIAN", "Categoría": "Primera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660066300", "Número escuela": "4660", "Nombre escuela": "ESCUELA HOGAR CARMEN PUCH DE GUEMES ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660066600", "Número escuela": "4645", "Nombre escuela": "25 DE MAYO DE 1810 ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660066800", "Número escuela": "4647", "Nombre escuela": "DR.MARIANO BOEDO ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660066900", "Número escuela": "4007", "Nombre escuela": "GENERAL MARTIN MIGUEL DE GÜEMES ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660067800", "Número escuela": "4362", "Nombre escuela": "DOMINGO FAUSTINO SARMIENTO ", "Categoría": "Segunda", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660067900", "Número escuela": "4107", "Nombre escuela": "DR.ARTURO LEON DAVALOS ", "Categoría": "Segunda", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660069900", "Número escuela": "4142", "Nombre escuela": "Coronel Jorge Enrrique Vidt", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660070800", "Número escuela": "4167", "Nombre escuela": "12 de Octubre Día de la Raza", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660071800", "Número escuela": "4028", "Nombre escuela": "BRIG.GRAL.JUAN ANTONIO ALVAREZ DE ARENALES ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660074500", "Número escuela": "4296", "Nombre escuela": "Jesús de Nazareth", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660002100", "Número escuela": "4270", "Nombre escuela": "MUJERES DE ACERO EN LA GESTA GUEMESIANA", "Categoría": "Cuarta", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660077100", "Número escuela": "4689", "Nombre escuela": "Islas Malvinas", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660077200", "Número escuela": "4516", "Nombre escuela": "Armada Argentina", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660002200", "Número escuela": "4461", "Nombre escuela": "CIUDAD DE LA PLATA ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660078000", "Número escuela": "4095", "Nombre escuela": "Coronel Apolinario de Figueroa", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660002300", "Número escuela": "4512", "Nombre escuela": "SAN NICOLAS CIUDAD DEL ACUERDO ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660078500", "Número escuela": "8081", "Nombre escuela": "Presbítero Pedro Ortiz de Zárate ( Sin categoria)", "Categoría": "", "Departamento": "ORAN"}, {"CUE - ANEXO": "660078600", "Número escuela": "4315", "Nombre escuela": "REINO DE BELGICA ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660078900", "Número escuela": "8015", "Nombre escuela": "Escuela Salesiana Ceferino Namuncurá", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660079900", "Número escuela": "4045", "Nombre escuela": "DR. ARTURO OÑATIVIA ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660002400", "Número escuela": "4650", "Nombre escuela": "SANTA TERESA DE JESUS ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660002500", "Número escuela": "4387", "Nombre escuela": "PASTORCITOS DE FATIMA ", "Categoría": "Cuarta", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660002600", "Número escuela": "4105", "Nombre escuela": "DR.FRANCISCO ALSINA ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660008900", "Número escuela": "4386", "Nombre escuela": "RIO LA VIÑA ", "Categoría": "Cuarta", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660009000", "Número escuela": "4388", "Nombre escuela": "MARIA MERCEDES PEÑALOZA ", "Categoría": "Cuarta", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660009100", "Número escuela": "4475", "Nombre escuela": "ESCUELA 4475 SAN LUCAS ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660009200", "Número escuela": "4596", "Nombre escuela": "GRAL.MARTIN MIGUEL JUAN DE LA MATA GUEMES ", "Categoría": "Cuarta", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660064200", "Número escuela": "4487", "Nombre escuela": "ESCUELA Nª 4487 ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660088700", "Número escuela": "4292", "Nombre escuela": "Berta Blanca Cerezo de Mamaní", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660088800", "Número escuela": "4286", "Nombre escuela": "Juan Domingo Perón", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660089000", "Número escuela": "4089", "Nombre escuela": "General Pizarro", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660064400", "Número escuela": "4285", "Nombre escuela": "ESCUELA Nº4285", "Categoría": "Cuarta", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660089700", "Número escuela": "4703", "Nombre escuela": "GENERAL MANUEL BELGRANO ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660090600", "Número escuela": "4047", "Nombre escuela": "MARIA EVA DUARTE DE PERON ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660091100", "Número escuela": "4358", "Nombre escuela": "DOCTOR NICOLAS AVELLANEDA ", "Categoría": "Segunda", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660064500", "Número escuela": "4354", "Nombre escuela": "JORGE NEWBERY ", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660082100", "Número escuela": "4357", "Nombre escuela": "DEL MILAGRO ", "Categoría": "Cuarta", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660125700", "Número escuela": "4749", "Nombre escuela": " PAMPA LLANA (REGIMEN DE VERANO)", "Categoría": "Tercera", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660091500", "Número escuela": "4408", "Nombre escuela": "MANUEL LAINEZ ", "Categoría": "Tercera", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660091900", "Número escuela": "4374", "Nombre escuela": "EMMA SOLA DE SOLA ", "Categoría": "Segunda", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660092300", "Número escuela": "4039", "Nombre escuela": "PROVINCIA DE BUENOS AIRES ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660092400", "Número escuela": "4009", "Nombre escuela": "9 DE JULIO DE 1816 ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660092900", "Número escuela": "4314", "Nombre escuela": "BRIGADIER GRAL JUAN ANTONIO ALVAREZ DE ARENALES", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660093100", "Número escuela": "4002", "Nombre escuela": "MARIANO CABEZON ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660094100", "Número escuela": "4064", "Nombre escuela": "FACUNDO DE ZUVIRIA", "Categoría": "Primera", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660065900", "Número escuela": "4439", "Nombre escuela": "GUILLERMO SIERRA ", "Categoría": "Segunda", "Departamento": "METÁN"}, {"CUE - ANEXO": "660094900", "Número escuela": "4083", "Nombre escuela": "MARCOS AVELLANEDA ", "Categoría": "Primera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660095400", "Número escuela": "4321", "Nombre escuela": "PBRO.DOCTOR ANDRES PACHECO DE MELO ", "Categoría": "Primera", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660095700", "Número escuela": "8093", "Nombre escuela": "Colegio San Cayetano", "Categoría": "Primera", "Departamento": "LA CALDERA"}, {"CUE - ANEXO": "660095800", "Número escuela": "4644", "Nombre escuela": "ALMIRANTE GUILLERMO BROWN ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660096000", "Número escuela": "4071", "Nombre escuela": "GOBERNADOR ABRAHAM CORNEJO ", "Categoría": "Segunda", "Departamento": "CHICOANA"}, {"CUE - ANEXO": "660096100", "Número escuela": "4093", "Nombre escuela": "Gral. M. Miguel de Güemes", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660024200", "Número escuela": "4154", "Nombre escuela": "Fray Francisco Victoria", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660124000", "Número escuela": "8173", "Nombre escuela": "Cento Educativo San José", "Categoría": "Tercera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660099000", "Número escuela": "4399", "Nombre escuela": "DR.ADOLFO GUEMES ", "Categoría": "Segunda", "Departamento": "SAN CARLOS"}, {"CUE - ANEXO": "660024300", "Número escuela": "4110", "Nombre escuela": "Virgen de Lujan", "Categoría": "Segunda", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660029900", "Número escuela": "4514", "Nombre escuela": "Martin Miguel de Güemes", "Categoría": "Segunda", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660105200", "Número escuela": "4127", "Nombre escuela": "MANUELA PEDRAZA ", "Categoría": "Primera", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660107500", "Número escuela": "4701", "Nombre escuela": "Ciudad de Orán", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660108100", "Número escuela": "4699", "Nombre escuela": "DOCTOR RICARDO JOAQUIN DURAN ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660108200", "Número escuela": "4700", "Nombre escuela": "LEGADO GENERAL BELGRANO ", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660113200", "Número escuela": "4768", "Nombre escuela": "PABLO VI ", "Categoría": "Cuarta", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660121200", "Número escuela": "4728", "Nombre escuela": "ALBA CORONEL DE PEREYRA ROZAS", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660121400", "Número escuela": "4726", "Nombre escuela": "PROFESOR OSCAR VENANCIO OÑATIVIA", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660121600", "Número escuela": "4730", "Nombre escuela": "NUESTRA SEÑORA DEL MILAGRO ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660121800", "Número escuela": "4731", "Nombre escuela": "FRAY ROQUE CHIELLI", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660121900", "Número escuela": "4732", "Nombre escuela": "SAN CARLOS BORROMEO ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660122400", "Número escuela": "4734", "Nombre escuela": "DOCTOR RENE GERONIMO FAVALORO ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660122900", "Número escuela": "8171", "Nombre escuela": "Centro Educativo Fe y Alegria", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660123000", "Número escuela": "8169", "Nombre escuela": "Nuestra Señora de Pentecostés", "Categoría": "Tercera", "Departamento": "CAFAYATE"}, {"CUE - ANEXO": "660123300", "Número escuela": "4742", "Nombre escuela": "Maria Dolores Laurentina Aranda", "Categoría": "Primera", "Departamento": "CERRILLOS"}, {"CUE - ANEXO": "660123400", "Número escuela": "4741", "Nombre escuela": "DOCTOR GUSTAVO CUCHI LEGUIZAMON", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660135000", "Número escuela": "4775", "Nombre escuela": "PROFESORA ELSA SALFITY ", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660058100", "Número escuela": "4305", "Nombre escuela": "Madre Teresa de Calcuta", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660061800", "Número escuela": "4737", "Nombre escuela": "Padre Rafael Gobelli", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660131100", "Número escuela": "4761", "Nombre escuela": "ROBERTO ROMERO", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660132000", "Número escuela": "4763", "Nombre escuela": "Hugo Alberto Luna", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660134800", "Número escuela": "4774", "Nombre escuela": "GENERAL JUAN JOSE VALLE", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660129400", "Número escuela": "8176", "Nombre escuela": "Fe y Alegria Jesus", "Categoría": "Segunda", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660137300", "Número escuela": "4795", "Nombre escuela": "Luis Maria Preti", "Categoría": "Segunda", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660138600", "Número escuela": "4796", "Nombre escuela": "JOSE ROBERTO IRIARTE", "Categoría": "Segunda", "Departamento": "R. DE LA FRONTERA"}, {"CUE - ANEXO": "660139200", "Número escuela": "4784", "Nombre escuela": "DOLORES CAMPION", "Categoría": "Segunda", "Departamento": "R. DE LERMA"}, {"CUE - ANEXO": "660144400", "Número escuela": "4811", "Nombre escuela": "2 DE MAYO CRUCERO A.R.A. GENERAL BELGRANO", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660145000", "Número escuela": "4808", "Nombre escuela": "Gesta Sanmartiniana", "Categoría": "Segunda", "Departamento": "R. DE LERMA"}, {"CUE - ANEXO": "660146900", "Número escuela": "4813", "Nombre escuela": "República de Turquía", "Categoría": "Segunda", "Departamento": "ORAN"}, {"CUE - ANEXO": "660062200", "Número escuela": "4290", "Nombre escuela": "Héroes de Malvinas", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660149100", "Número escuela": "4816", "Nombre escuela": "Bicentenario de la Patria", "Categoría": "Segunda", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660149300", "Número escuela": "4817", "Nombre escuela": "Dr. Roberto Domingo Nazr", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660157000", "Número escuela": "4837", "Nombre escuela": "SAN JOSE DE LOS CERRILLOS", "Categoría": "Segunda", "Departamento": "CERRILLOS"}, {"CUE - ANEXO": "660157100", "Número escuela": "4843", "Nombre escuela": "Bicentenario de la Batalla de Salta", "Categoría": "Segunda", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660080300", "Número escuela": "4363", "Nombre escuela": "Bernardino Rivadavia", "Categoría": "Primera", "Departamento": "GRAL J. SAN MARTIN"}, {"CUE - ANEXO": "660160000", "Número escuela": "4851", "Nombre escuela": "Dr. Nestor Juan Taranto", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "660160300", "Número escuela": "4848", "Nombre escuela": "Nuestra Sra. de Atocha", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660055400", "Número escuela": "4385", "Nombre escuela": "WENCESLAO SARAVIA TOLEDO ", "Categoría": "Tercera", "Departamento": "METÁN"}, {"CUE - ANEXO": "660162500", "Número escuela": "4845", "Nombre escuela": "Bicentenario de la Independencia Argentina", "Categoría": "Primera", "Departamento": "CAPITAL"}, {"CUE - ANEXO": "660779000", "Número escuela": "4152", "Nombre escuela": "Reconquista", "Categoría": "Primera", "Departamento": "ORAN"}, {"CUE - ANEXO": "6600028900", "Número escuela": "4303", "Nombre escuela": "Maestro Roberto Terrones Riera", "Categoría": "Primera", "Departamento": "ORAN"}];
+
+    function groupBySection(config) {
+      const sections = {};
+      config.forEach(q => {
+        const sec = (q.seccion && q.seccion.trim()) ? q.seccion.trim() : "Formulario";
+        if (!sections[sec]) sections[sec] = [];
+        sections[sec].push(q);
+      });
+      return sections;
+    }
+
+    function buildForm() {
+      const form = document.getElementById("surveyForm");
+      form.innerHTML = "";
+      const sections = groupBySection(formConfig);
+
+      Object.keys(sections).forEach(secName => {
+        const fs = document.createElement("fieldset");
+        const legend = document.createElement("legend");
+        legend.textContent = secName;
+        fs.appendChild(legend);
+
+        sections[secName].forEach(q => {
+          if (q.tipo === "oculta") {
+            // hidden input
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = q.id;
+            input.id = q.id;
+            fs.appendChild(input);
+            return;
+          }
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "question";
+          const label = document.createElement("label");
+          label.htmlFor = q.id;
+          label.textContent = q.pregunta || q.id;
+          if (q.obligatoria) {
+            const span = document.createElement("span");
+            span.textContent = " *";
+            span.style.color = "red";
+            label.appendChild(span);
+          }
+          wrapper.appendChild(label);
+
+          let inputEl = null;
+
+          switch (q.tipo) {
+            case "texto":
+              inputEl = document.createElement("input");
+              inputEl.type = "text";
+              break;
+            case "parrafo":
+              inputEl = document.createElement("textarea");
+              break;
+            case "numero":
+              inputEl = document.createElement("input");
+              inputEl.type = "number";
+              inputEl.inputMode = "numeric";
+              break;
+            case "email":
+              inputEl = document.createElement("input");
+              inputEl.type = "email";
+              break;
+            case "fecha":
+              inputEl = document.createElement("input");
+              inputEl.type = "date";
+              break;
+            case "hora":
+              inputEl = document.createElement("input");
+              inputEl.type = "time";
+              break;
+            case "seleccion_unica":
+            case "escala":
+              {
+                const container = document.createElement("div");
+                container.className = "options-inline";
+                (q.opciones || []).forEach((opt, idx) => {
+                  const optLabel = document.createElement("label");
+                  const radio = document.createElement("input");
+                  radio.type = "radio";
+                  radio.name = q.id;
+                  radio.value = opt;
+                  optLabel.appendChild(radio);
+                  optLabel.appendChild(document.createTextNode(opt));
+                  container.appendChild(optLabel);
+                });
+                wrapper.appendChild(container);
+              }
+              break;
+            case "seleccion_multiple":
+              {
+                const container = document.createElement("div");
+                (q.opciones || []).forEach((opt, idx) => {
+                  const optLabel = document.createElement("label");
+                  const cb = document.createElement("input");
+                  cb.type = "checkbox";
+                  cb.name = q.id;
+                  cb.value = opt;
+                  optLabel.appendChild(cb);
+                  optLabel.appendChild(document.createTextNode(opt));
+                  container.appendChild(optLabel);
+                });
+                wrapper.appendChild(container);
+              }
+              break;
+            case "desplegable":
+              {
+                const sel = document.createElement("select");
+                sel.name = q.id;
+                sel.id = q.id;
+                const emptyOpt = document.createElement("option");
+                emptyOpt.value = "";
+                emptyOpt.textContent = "Seleccione…";
+                sel.appendChild(emptyOpt);
+                (q.opciones || []).forEach(opt => {
+                  const op = document.createElement("option");
+                  op.value = opt;
+                  op.textContent = opt;
+                  sel.appendChild(op);
+                });
+                inputEl = sel;
+              }
+              break;
+            case "autocompletar":
+              {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.name = q.id;
+                input.id = q.id;
+                input.setAttribute("autocomplete", "off");
+                input.placeholder = "Escribí para buscar…";
+
+                // simple datalist with escuelas
+                const dataListId = q.id + "_list";
+                const dl = document.createElement("datalist");
+                dl.id = dataListId;
+                escuelasData.forEach(e => {
+                  const opt = document.createElement("option");
+                  const cue = e["CUE - ANEXO"] || e["CUE"] || "";
+                  const num = e["Número escuela"] || "";
+                  const nom = e["Nombre escuela"] || "";
+                  opt.value = `${num} - ${nom}`;
+                  opt.setAttribute("data-cue", cue);
+                  dl.appendChild(opt);
+                });
+                input.setAttribute("list", dataListId);
+                wrapper.appendChild(input);
+                wrapper.appendChild(dl);
+                inputEl = null; // ya lo agregamos
+              }
+              break;
+            default:
+              inputEl = document.createElement("input");
+              inputEl.type = "text";
+          }
+
+          if (inputEl) {
+            inputEl.name = q.id;
+            inputEl.id = q.id;
+            wrapper.appendChild(inputEl);
+          }
+
+          fs.appendChild(wrapper);
+        });
+
+        form.appendChild(fs);
+      });
+    }
+
+    function getFormData() {
+      const data = {};
+      formConfig.forEach(q => {
+        const id = q.id;
+        if (q.tipo === "oculta") {
+          const el = document.getElementById(id);
+          data[id] = el ? el.value : "";
+        } else if (["seleccion_unica","escala"].includes(q.tipo)) {
+          const checked = document.querySelector(`input[name="${id}"]:checked`);
+          data[id] = checked ? checked.value : "";
+        } else if (q.tipo === "seleccion_multiple") {
+          const checked = Array.from(document.querySelectorAll(`input[name="${id}"]:checked`));
+          data[id] = checked.map(c => c.value);
+        } else {
+          const el = document.getElementById(id);
+          data[id] = el ? el.value : "";
+        }
+      });
+      data["_timestamp"] = new Date().toISOString();
+      return data;
+    }
+
+    function loadSaved() {
+      const raw = localStorage.getItem("respuestas_encuesta_offline");
+      if (!raw) return [];
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch(e) {
+        return [];
+      }
+    }
+
+    function saveResponses(list) {
+      localStorage.setItem("respuestas_encuesta_offline", JSON.stringify(list));
+    }
+
+    function setupButtons() {
+      const saveBtn = document.getElementById("saveBtn");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const clearBtn = document.getElementById("clearBtn");
+
+      saveBtn.addEventListener("click", () => {
+        const data = getFormData();
+        const list = loadSaved();
+        list.push(data);
+        saveResponses(list);
+        alert("Respuesta guardada en este dispositivo.");
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        const list = loadSaved();
+        if (!list.length) {
+          alert("No hay respuestas guardadas todavía.");
+          return;
+        }
+        const blob = new Blob([JSON.stringify(list, null, 2)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "respuestas_encuesta_offline.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      clearBtn.addEventListener("click", () => {
+        if (confirm("¿Seguro que querés borrar todas las respuestas guardadas en este dispositivo?")) {
+          saveResponses([]);
+          alert("Respuestas borradas.");
+        }
+      });
+    }
+
+    function setupOfflineIndicator() {
+      const indicator = document.getElementById("offlineIndicator");
+      const text = document.getElementById("offlineText");
+      function update() {
+        if (navigator.onLine) {
+          indicator.style.background = "#dcfce7";
+          indicator.style.color = "#166534";
+          text.textContent = "Estás online. Igual podés usar el formulario offline.";
+        } else {
+          indicator.style.background = "#fee2e2";
+          indicator.style.color = "#991b1b";
+          text.textContent = "Estás offline. El formulario sigue funcionando y guarda en este dispositivo.";
+        }
+      }
+      window.addEventListener("online", update);
+      window.addEventListener("offline", update);
+      update();
+    }
+
+    buildForm();
+    setupButtons();
+    setupOfflineIndicator();
+  </script>
+</body>
+</html>
