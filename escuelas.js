@@ -1,1 +1,0 @@
-const LISTA_ESCUELAS = [{"label": "100 - ESCUELA A", "depto": "CAPITAL", "cue": "001"}, {"label": "200 - ESCUELA B", "depto": "CAFAYATE", "cue": "002"}];
