@@ -31,7 +31,7 @@ function configurarValidaciones() {
   });
 }
 
-// Poblar departamentos desde DEPARTAMENTOS
+// Poblar departamentos
 function poblarDepartamentos() {
   const select = document.getElementById("departamento");
   DEPARTAMENTOS.forEach(dep => {
@@ -42,40 +42,63 @@ function poblarDepartamentos() {
   });
 }
 
-// Configurar escuelas con datalist
+// Configurar escuelas: input bloqueado & búsqueda por número y nombre
 function configurarEscuelas() {
   const selDep = document.getElementById("departamento");
   const inputEscuela = document.getElementById("escuela");
   const datalist = document.getElementById("lista-escuelas");
   const cueInput = document.getElementById("cue_anexo");
 
-  function actualizarLista() {
+  // 🔒 Bloquear input al inicio
+  inputEscuela.disabled = true;
+
+  // 🔓 Habilitar input al elegir departamento
+  selDep.addEventListener("change", () => {
     datalist.innerHTML = "";
     inputEscuela.value = "";
     cueInput.value = "";
+
+    if (selDep.value) {
+      inputEscuela.disabled = false;
+      inputEscuela.placeholder = "Escribí para buscar (nombre o número)";
+    } else {
+      inputEscuela.disabled = true;
+      inputEscuela.placeholder = "";
+    }
+  });
+
+  // 🔍 Sugerencias cuando escribís (3+ letras)
+  inputEscuela.addEventListener("input", () => {
+    const texto = norm(inputEscuela.value);
     const dep = selDep.value;
-    if (!dep) return;
 
-    const filtradas = LISTA_ESCUELAS.filter(e => e.depto === dep);
-    filtradas.forEach(e => {
-      const opt = document.createElement("option");
-      opt.value = e.label;
-      datalist.appendChild(opt);
-    });
-  }
-
-  selDep.addEventListener("change", actualizarLista);
-
-  inputEscuela.addEventListener("change", () => {
+    datalist.innerHTML = "";
     cueInput.value = "";
-    const texto = inputEscuela.value.trim();
+
+    if (!dep || texto.length < 3) return;
+
+    LISTA_ESCUELAS
+      .filter(e => 
+        e.depto === dep &&
+        (norm(e.label).includes(texto)) // matchea número y nombre
+      )
+      .forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e.label;
+        datalist.appendChild(opt);
+      });
+  });
+
+  // Setear CUE cuando selecciona coincidencia exacta
+  inputEscuela.addEventListener("change", () => {
     const dep = selDep.value;
-    if (!texto || !dep) return;
+    const texto = norm(inputEscuela.value);
 
     const encontrada = LISTA_ESCUELAS.find(
-      e => e.depto === dep && norm(e.label) === norm(texto)
+      e => e.depto === dep && norm(e.label) === texto
     );
-    if (encontrada) cueInput.value = encontrada.cue;
+
+    cueInput.value = encontrada ? encontrada.cue : "";
   });
 }
 
@@ -105,12 +128,10 @@ function irDesdeDatos() {
   mostrarPantalla("evaluacion");
 }
 
-// Desde pantallas intermedias -> evaluación
 function irAEvaluacion() {
   mostrarPantalla("evaluacion");
 }
 
-// Botón anterior dinámico en evaluación
 function volverDesdeEvaluacion() {
   const cargo = document.getElementById("cargo").value;
 
@@ -132,7 +153,6 @@ function volverDesdeEvaluacion() {
   mostrarPantalla("datos");
 }
 
-// Guardar respuestas en localStorage
 function guardarRespuestas() {
   const payload = {
     timestamp: new Date().toISOString(),
