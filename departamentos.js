@@ -1,18 +1,1 @@
-const DEPARTAMENTOS = [
-  "CACHI",
-  "CAFAYATE",
-  "CAPITAL",
-  "CERRILLOS",
-  "CHICOANA",
-  "GRAL J. SAN MARTIN",
-  "GRAL. GÜEMES",
-  "GUACHIPAS",
-  "LA CALDERA",
-  "LA CANDELARIA",
-  "LA VIÑA",
-  "METÁN",
-  "ORAN",
-  "R. DE LA FRONTERA",
-  "R. DE LERMA",
-  "SAN CARLOS"
-];
+const DEPARTAMENTOS = ['CAPITAL'];

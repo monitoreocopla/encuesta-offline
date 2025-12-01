@@ -6,9 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
-  <script src="departamentos.js"></script>
-  <script src="escuelas.js"></script>
-  <script src="script.js" defer></script>
 </head>
 <body>
   <header>
@@ -17,7 +14,6 @@
   </header>
 
   <main>
-    <!-- Pantalla: Datos personales -->
     <section class="screen" id="pantalla-datos" data-screen="datos">
       <h2>Datos personales</h2>
 
@@ -57,7 +53,7 @@
       </div>
 
       <div class="field">
-        <label for="departamento">Departamento al que pertenece la escuela</label>
+        <label for="departamento">Departamento</label>
         <select id="departamento">
           <option value="">Seleccionar…</option>
         </select>
@@ -67,7 +63,6 @@
         <label for="escuela">Escuela</label>
         <input type="text" id="escuela" list="lista-escuelas" autocomplete="off" />
         <datalist id="lista-escuelas"></datalist>
-        <small class="hint">Escribí parte del nombre y elegí de la lista</small>
       </div>
 
       <input type="hidden" id="cue_anexo" />
@@ -77,57 +72,46 @@
       </div>
     </section>
 
-    <!-- Pantalla: preguntas para directivos -->
     <section class="screen" id="pantalla-directivos" data-screen="directivos" hidden>
       <h2>Preguntas para directivos</h2>
-
       <div class="field">
         <label for="preg_directivos">Escribí tus respuestas</label>
         <textarea id="preg_directivos" rows="4"></textarea>
       </div>
-
       <div class="nav-buttons">
         <button type="button" class="secondary" data-prev="datos">Anterior</button>
         <button type="button" id="btn-directivos-siguiente" class="primary">Siguiente</button>
       </div>
     </section>
 
-    <!-- Pantalla: preguntas para docentes -->
     <section class="screen" id="pantalla-docentes" data-screen="docentes" hidden>
       <h2>Preguntas para docentes</h2>
-
       <div class="field">
         <label for="preg_docentes">Escribí tus respuestas</label>
         <textarea id="preg_docentes" rows="4"></textarea>
       </div>
-
       <div class="nav-buttons">
         <button type="button" class="secondary" data-prev="datos">Anterior</button>
         <button type="button" id="btn-docentes-siguiente" class="primary">Siguiente</button>
       </div>
     </section>
 
-    <!-- Pantalla: preguntas para directivos con grado a cargo / personal único -->
     <section class="screen" id="pantalla-dir-grado" data-screen="dir-grado" hidden>
       <h2>Preguntas para directivos con grado a cargo y personal único</h2>
-
       <div class="field">
         <label for="preg_dir_grado">Escribí tus respuestas</label>
         <textarea id="preg_dir_grado" rows="4"></textarea>
       </div>
-
       <div class="nav-buttons">
         <button type="button" class="secondary" data-prev="datos">Anterior</button>
         <button type="button" id="btn-dir-grado-siguiente" class="primary">Siguiente</button>
       </div>
     </section>
 
-    <!-- Pantalla: evaluación del encuentro -->
     <section class="screen" id="pantalla-evaluacion" data-screen="evaluacion" hidden>
       <h2>Evaluación del encuentro</h2>
-
       <div class="field">
-        <label for="satisfaccion">En general, ¿qué tan satisfecho/a quedaste con el encuentro?</label>
+        <label for="satisfaccion">¿Qué tan satisfecho/a quedaste?</label>
         <select id="satisfaccion">
           <option value="">Seleccionar…</option>
           <option value="1">Nada satisfecho/a</option>
@@ -137,27 +121,31 @@
           <option value="5">Muy satisfecho/a</option>
         </select>
       </div>
-
       <div class="field">
-        <label for="comentarios">Comentarios o sugerencias</label>
+        <label for="comentarios">Comentarios</label>
         <textarea id="comentarios" rows="4"></textarea>
       </div>
-
       <div class="nav-buttons">
         <button type="button" class="secondary" data-prev="dinamico">Anterior</button>
         <button type="button" id="btn-evaluacion-finalizar" class="primary">Finalizar</button>
       </div>
     </section>
 
-    <!-- Pantalla final -->
     <section class="screen" id="pantalla-final" hidden>
       <h2>Gracias por responder</h2>
-      <p>Las respuestas quedaron guardadas en este dispositivo. Cuando haya conexión se pueden exportar o sincronizar.</p>
+      <p>Las respuestas quedaron guardadas en este dispositivo.</p>
     </section>
+
   </main>
 
   <footer>
-    <small>Versión de prueba para trabajo offline.</small>
+    <small>Formulario offline.</small>
   </footer>
+
+  <!-- Scripts al final -->
+  <script src="departamentos.js"></script>
+  <script src="escuelas.js"></script>
+  <script src="script.js"></script>
+
 </body>
 </html>
