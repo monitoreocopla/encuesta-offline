@@ -1,0 +1,1 @@
+const LISTA_ESCUELAS = [];
