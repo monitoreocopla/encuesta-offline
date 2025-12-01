@@ -1,67 +1,63 @@
 [
   {
-    "id": "0.1.",
-    "tipo": "fecha",
+    "id": "fecha",
+    "tipo": "oculta",
     "pregunta": "Marca temporal",
     "opciones": [],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "0.2.",
+    "id": "info1",
+    "tipo": "informativo",
+    "pregunta": "Antes de comenzar a responder el formulario “Cómo estamos avanzando”, necesitamos que lea algunas cuestiones informativas.\n\nEl objetivo de este instrumento es poder conocer con mayor profundidad el funcionamiento del plan para poder monitorear las diferentes acciones, tener más detalles de la implementación y mejorar la propuesta de trabajo.\n\nEs muy importante para nosotros ser cuidadosos con la información recolectada para proteger a quienes participan y responden la encuesta. Estamos trabajando constantemente para cumplir ese objetivo, y en este marco es importante ofrecerle la siguiente información antes de avanzar:\n\nLos datos personales que usted proporcione a través de este formulario serán utilizados exclusivamente para el monitoreo del Programa de Fortalecimiento de Alfabetización. El tratamiento de los mismos se llevará a cabo conforme a lo dispuesto por la Ley N° 25.326 de Protección de Datos Personales, garantizando su confidencialidad y seguridad.\n\nEl titular de los datos tiene derecho a solicitar el acceso, la rectificación o la supresión de la información provista, así como a ejercer los demás derechos establecidos en la Ley N° 25.326. Para ello, podrá dirigirse al ministerio de Salta, que es responsable del tratamiento de los datos.",
+    "opciones": [],
+    "seccion": "01 - Datos personales",
+    "cond": ""
+  },
+  {
+    "id": "correo",
     "tipo": "email",
     "pregunta": "Dirección de correo electrónico",
     "opciones": [],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": "tiene que ser un correo electrónico. si lo escribe mal enviar aviso \"Ingrese un correo electrónico válido\""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "1.",
+    "id": "q1",
     "tipo": "texto",
     "pregunta": "Apellido:",
     "opciones": [],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "2.",
+    "id": "q2",
     "tipo": "texto",
     "pregunta": "Nombre:",
     "opciones": [],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "3.",
+    "id": "q3",
     "tipo": "numero",
     "pregunta": "Número de teléfono celular (sin 0 ni 15. Ej: 3875102233):",
     "opciones": [],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "4.",
+    "id": "q4",
     "tipo": "número",
     "pregunta": "DNI (sin puntos):",
     "opciones": [],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": "mín 7, máx 9, solo números, sin puntos. Si ingresa mal el dato enviar aviso \"Ingrese un número de documento válido\""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "5.",
-    "tipo": "seleccion_unica",
+    "id": "q5",
+    "tipo": "desplegable",
     "pregunta": "Departamento al que pertenece la escuela en la que trabaja:",
     "opciones": [
       "Cachi",
@@ -80,34 +76,28 @@
       "Rosario de Lerma",
       "San Carlos"
     ],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "7.",
+    "id": "q7",
     "tipo": "autocompletar",
     "pregunta": "Nombre y número de la escuela:",
     "opciones": [],
-    "obligatoria": false,
-    "seccion": "buscar en hoja escuelas nombre y número",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": "buscar en hoja escuelas nombre y número"
   },
   {
-    "id": "6.",
+    "id": "q6",
     "tipo": "oculta",
     "pregunta": "CUE de la Escuela",
     "opciones": [],
-    "obligatoria": false,
-    "seccion": "completar automáticamente con el dato de cueanexo según codigo 6 según hoja escuela",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": "completar automáticamente con el dato de cueanexo según codigo 6 según hoja escuela"
   },
   {
-    "id": "8.",
-    "tipo": "seleccion_unica",
+    "id": "q8",
+    "tipo": "desplegable",
     "pregunta": "Cargo:",
     "opciones": [
       "Docente de grado",
@@ -117,13 +107,11 @@
       "Personal único",
       "Otro"
     ],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "si elige “Otro” abrir campo libre",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": "si elige “Otro” abrir campo libre"
   },
   {
-    "id": "9.",
+    "id": "q9",
     "tipo": "seleccion_unica",
     "pregunta": "Turno en que se desempeña en esta escuela:",
     "opciones": [
@@ -133,14 +121,12 @@
       "Jornada completa",
       "Jornada extendida"
     ],
-    "obligatoria": true,
-    "seccion": "datos personales",
-    "cond": "",
-    "notas": ""
+    "seccion": "01 - Datos personales",
+    "cond": ""
   },
   {
-    "id": "10.",
-    "tipo": "seleccion_unica",
+    "id": "q10",
+    "tipo": "desplegable",
     "pregunta": "¿En qué año comenzó a participar del programa?",
     "opciones": [
       "2021",
@@ -149,14 +135,12 @@
       "2024",
       "2025"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "11.a.1.",
-    "tipo": "seleccion_unica",
+    "id": "q11a1",
+    "tipo": "desplegable",
     "pregunta": "¿A cuántos encuentros del programa asistió este año?",
     "opciones": [
       "1",
@@ -166,13 +150,11 @@
       "5",
       "6"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "11.a.2.",
+    "id": "q11a2",
     "tipo": "seleccion_unica",
     "pregunta": "¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):",
     "opciones": [
@@ -183,13 +165,11 @@
       "5",
       "6"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "12.",
+    "id": "q12",
     "tipo": "seleccion_unica",
     "pregunta": "¿Cuántos docentes de la escuela considera usted que están implementando las propuestas del programa?",
     "opciones": [
@@ -199,13 +179,11 @@
       "Muy pocos",
       "Ninguno"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "13.",
+    "id": "q13",
     "tipo": "seleccion_unica",
     "pregunta": "¿Nota cambios en la escuela a partir de la implementación del programa?",
     "opciones": [
@@ -213,23 +191,19 @@
       "No noto cambios",
       "Noto cambios favorables"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "14.",
+    "id": "q14",
     "tipo": "texto",
     "pregunta": "Si notó cambios, le pedimos que especifique a continuación:",
     "opciones": [],
-    "obligatoria": false,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "15.",
+    "id": "q15",
     "tipo": "seleccion_unica",
     "pregunta": "En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?",
     "opciones": [
@@ -239,26 +213,22 @@
       "Tengo entre el 30 y el 60%",
       "Tengo más del 60%"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "16.1.",
+    "id": "q161",
     "tipo": "seleccion_unica",
     "pregunta": "¿Enfrenta dificultades para la implementación del Plan?",
     "opciones": [
       "Sí",
       "No"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "16.2.",
+    "id": "q162",
     "tipo": "seleccion_múltiple",
     "pregunta": "¿Cuáles de las siguientes dificultades encuentra para la implementación del plan?",
     "opciones": [
@@ -269,13 +239,11 @@
       "Falta de acompañamiento familiar",
       "Otra"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Sí\" en pregunta 16.1.",
-    "notas": "máximo 3 opciones"
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Sí\" en pregunta 16.1."
   },
   {
-    "id": "17.",
+    "id": "q17",
     "tipo": "seleccion_unica",
     "pregunta": "Si ya ha recibido la visita de la Orientadora Pedagógica, ¿cómo evalúa el vínculo que se está estableciendo?",
     "opciones": [
@@ -285,13 +253,11 @@
       "Todavía no he recibido la visita de la Orientadora Pedagógica",
       "Otra"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": "si elige “Otro” abrir campo libre"
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "18.",
+    "id": "q18",
     "tipo": "seleccion_múltiple",
     "pregunta": "¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.",
     "opciones": [
@@ -302,13 +268,11 @@
       "Nos mantiene conectaods con el plan",
       "Ninguna"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": "máximo 3 opciones"
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "19.",
+    "id": "q19",
     "tipo": "escala",
     "pregunta": "¿Considera que el programa aporta a su formación profesional? ¿En qué medida?",
     "opciones": [
@@ -318,13 +282,11 @@
       "4",
       "5"
     ],
-    "obligatoria": true,
-    "seccion": "directivos",
-    "cond": "si elige \"Directivo\" en pregunta 8",
-    "notas": ""
+    "seccion": "02 - Directivos",
+    "cond": "si elige \"Directivo\" en pregunta 8"
   },
   {
-    "id": "20.",
+    "id": "q20",
     "tipo": "seleccion_unica",
     "pregunta": "Grado que tiene a cargo:",
     "opciones": [
@@ -333,13 +295,11 @@
       "Tercero",
       "Plurigrado/Pluriaño"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "21.a.1.",
+    "id": "q21a1",
     "tipo": "seleccion_unica",
     "pregunta": "¿A cuántos encuentros del programa asistió este año?",
     "opciones": [
@@ -350,13 +310,11 @@
       "5",
       "6"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "21.a.2.",
+    "id": "q21a2",
     "tipo": "seleccion_unica",
     "pregunta": "¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):",
     "opciones": [
@@ -367,13 +325,11 @@
       "5",
       "6"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "22.",
+    "id": "q22",
     "tipo": "seleccion_unica",
     "pregunta": "Si tiene plurigrado, especifique qué grados están agrupados:",
     "opciones": [
@@ -384,13 +340,11 @@
       "Quinto",
       "Sexto"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "23.",
+    "id": "q23",
     "tipo": "seleccion_unica",
     "pregunta": "¿En qué año comenzó a participar del programa?",
     "opciones": [
@@ -400,13 +354,11 @@
       "2024",
       "2025"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "24.",
+    "id": "q24",
     "tipo": "seleccion_unica",
     "pregunta": "En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?",
     "opciones": [
@@ -416,13 +368,11 @@
       "Tengo entre el 30 y el 60%",
       "Tengo más del 60%"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "25.",
+    "id": "q25",
     "tipo": "seleccion_unica",
     "pregunta": "¿Cuántas veces por semana realizan las actividades de \"Esta semana escribimos\"?",
     "opciones": [
@@ -433,13 +383,11 @@
       "Más de 3 veces por semana",
       "No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "26.",
+    "id": "q26",
     "tipo": "seleccion_unica",
     "pregunta": "¿Cuánto tiempo les toma realizar las actividades de \"Esta semana escribimos\"?",
     "opciones": [
@@ -449,13 +397,11 @@
       "Más de 60 minutos",
       "No corresponde"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "27.",
+    "id": "q27",
     "tipo": "seleccion_unica",
     "pregunta": "¿Cuánto cree que cambió su manera de enseñar desde que participa del programa?",
     "opciones": [
@@ -464,36 +410,30 @@
       "Poco",
       "Nada"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "27.1.",
+    "id": "q271",
     "tipo": "seleccion_unica",
     "pregunta": "¿Enfrenta dificultades para la implementación del Plan?",
     "opciones": [
       "Sí",
       "No"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "27.2.",
+    "id": "q272",
     "tipo": "texto",
     "pregunta": "¿Puede especificar cuáles?",
     "opciones": [],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Sí\" en pregunta 27.1.",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Sí\" en pregunta 27.1."
   },
   {
-    "id": "28.",
+    "id": "q28",
     "tipo": "seleccion_unica",
     "pregunta": "¿Comparte material audiovisual con las familias a través de WhatsApp?",
     "opciones": [
@@ -502,26 +442,22 @@
       "Nunca",
       "Otro"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "29.",
+    "id": "q29",
     "tipo": "seleccion_unica",
     "pregunta": "¿Utilizan en el aula el material complementario?",
     "opciones": [
       "Sí",
       "No"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "30.",
+    "id": "q30",
     "tipo": "seleccion_unica",
     "pregunta": "¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.",
     "opciones": [
@@ -532,13 +468,11 @@
       "Nos mantiene conectaods con el plan",
       "Ninguna"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": "máximo 3 opciones"
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "31.",
+    "id": "q31",
     "tipo": "escala",
     "pregunta": "¿Considera que el programa aporta a su formación profesional? ¿En qué medida?",
     "opciones": [
@@ -548,13 +482,11 @@
       "4",
       "5"
     ],
-    "obligatoria": true,
-    "seccion": "docentes",
-    "cond": "si elige \"Docente\" en pregunta 8",
-    "notas": ""
+    "seccion": "03 - Docentes",
+    "cond": "si elige \"Docente\" en pregunta 8"
   },
   {
-    "id": "32.",
+    "id": "q32",
     "tipo": "seleccion_unica",
     "pregunta": "¿En qué año comenzó a participar del programa?",
     "opciones": [
@@ -564,13 +496,11 @@
       "2024",
       "2025"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "33.a.1.",
+    "id": "q33a1",
     "tipo": "seleccion_unica",
     "pregunta": "¿A cuántos encuentros del programa asistió este año?",
     "opciones": [
@@ -581,13 +511,11 @@
       "5",
       "6"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "33.a.2.",
+    "id": "q33a2",
     "tipo": "seleccion_unica",
     "pregunta": "¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):",
     "opciones": [
@@ -598,13 +526,11 @@
       "5",
       "6"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "34.",
+    "id": "q34",
     "tipo": "seleccion_unica",
     "pregunta": "¿Nota cambios en la escuela a partir de la implementación del programa?",
     "opciones": [
@@ -612,36 +538,30 @@
       "No noto cambios",
       "Noto cambios favorables"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "35.",
+    "id": "q35",
     "tipo": "texto",
     "pregunta": "Si notó cambios, le pedimos que especifique a continuación:",
     "opciones": [],
-    "obligatoria": false,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "36.1.",
+    "id": "q361",
     "tipo": "selección_unica",
     "pregunta": "¿Enfrenta dificultades para la implementación del Plan?",
     "opciones": [
       "Sí",
       "No"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "36.2.",
+    "id": "q362",
     "tipo": "selección_multiple",
     "pregunta": "¿Cuáles de las siguientes dificultades encuentra para la implementación del plan?",
     "opciones": [
@@ -652,13 +572,11 @@
       "Falta de acompañamiento familiar",
       "Otra"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "37.",
+    "id": "q37",
     "tipo": "selección_unica",
     "pregunta": "Si ya ha recibido la visita de la Orientadora Pedagógica, ¿Cómo evalúa el vínculo que se está estableciendo?",
     "opciones": [
@@ -668,13 +586,11 @@
       "Todavía no he recibido la visita de la Orientadora Pedagógica",
       "Otra"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "38.",
+    "id": "q38",
     "tipo": "selección_unica",
     "pregunta": "Grado que tiene a cargo:",
     "opciones": [
@@ -683,13 +599,11 @@
       "Tercero",
       "Plurigrado/Pluriaño/Personal único"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "39.",
+    "id": "q39",
     "tipo": "selección_unica",
     "pregunta": "Si tiene plurigrado, especifique qué grados están agrupados:",
     "opciones": [
@@ -700,13 +614,11 @@
       "Quinto",
       "Sexto"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Plurigrado/Pluriaño\" o \"Personal único\" en pregunta 38",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Plurigrado/Pluriaño\" o \"Personal único\" en pregunta 38"
   },
   {
-    "id": "40.",
+    "id": "q40",
     "tipo": "selección_unica",
     "pregunta": "En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?",
     "opciones": [
@@ -716,13 +628,11 @@
       "Tengo entre el 30 y el 60%",
       "Tengo más del 60%"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "41.",
+    "id": "q41",
     "tipo": "selección_unica",
     "pregunta": "¿Cuántas veces por semana realizan las actividades de \"Esta semana escribimos\"?",
     "opciones": [
@@ -733,13 +643,11 @@
       "Más de 3 veces por semana",
       "No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "42.",
+    "id": "q42",
     "tipo": "selección_unica",
     "pregunta": "¿Cuánto tiempo les toma realizar las actividades de \"Esta semana escribimos\"?",
     "opciones": [
@@ -749,13 +657,11 @@
       "Más de 60 minutos",
       "No corresponde"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "43.",
+    "id": "q43",
     "tipo": "selección_unica",
     "pregunta": "¿Cuánto cree que cambió su manera de enseñar desde que participa del programa?",
     "opciones": [
@@ -764,13 +670,11 @@
       "Poco",
       "Nada"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "44.",
+    "id": "q44",
     "tipo": "selección_unica",
     "pregunta": "¿Comparte material audiovisual con las familias a través de WhatsApp?",
     "opciones": [
@@ -779,26 +683,22 @@
       "Nunca",
       "Otro"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "45.",
+    "id": "q45",
     "tipo": "selección_unica",
     "pregunta": "¿Utilizan en el aula el material complementario?",
     "opciones": [
       "Si",
       "No"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "46.",
+    "id": "q46",
     "tipo": "selección_unica",
     "pregunta": "¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.",
     "opciones": [
@@ -809,13 +709,11 @@
       "Nos mantiene conectaods con el plan",
       "Ninguna"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "47.",
+    "id": "q47",
     "tipo": "escala",
     "pregunta": "¿Considera que el programa aporta a su formación profesional? ¿En qué medida?",
     "opciones": [
@@ -825,26 +723,30 @@
       "4",
       "5"
     ],
-    "obligatoria": true,
-    "seccion": "Directivos con grado a cargo",
-    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8",
-    "notas": ""
+    "seccion": "04 - Directivos con grado a cargo",
+    "cond": "si elige \"Directivos con grado a cargo\" o \"Personal único\" en pregunta 8"
   },
   {
-    "id": "48.0.",
+    "id": "q480",
     "tipo": "selección_unica",
     "pregunta": "¿Asistió a un encuentro de capacitación docente este mes?",
     "opciones": [
       "Sí",
       "No"
     ],
-    "obligatoria": true,
-    "seccion": "",
-    "cond": "",
-    "notas": ""
+    "seccion": "05 - Evaluación del encuentro",
+    "cond": ""
   },
   {
-    "id": "48.a.",
+    "id": "info2",
+    "tipo": "informativo",
+    "pregunta": "Usando una escala del 1 al 5 donde 1 significa \"nada adecuado\" y 5 \"muy adecuado\" evalúe los siguientes aspectos del encuentro de hoy: ",
+    "opciones": [],
+    "seccion": "05 - Evaluación del encuentro",
+    "cond": "si elige \"Sí\" en pregunta 48.0."
+  },
+  {
+    "id": "q48a",
     "tipo": "escala",
     "pregunta": "Contenidos trabajados",
     "opciones": [
@@ -854,13 +756,11 @@
       "4",
       "5"
     ],
-    "obligatoria": true,
-    "seccion": "",
-    "cond": "si elige \"Sí\" en pregunta 48.0.",
-    "notas": ""
+    "seccion": "05 - Evaluación del encuentro",
+    "cond": "si elige \"Sí\" en pregunta 48.0."
   },
   {
-    "id": "48.b.",
+    "id": "q48b",
     "tipo": "escala",
     "pregunta": "Claridad en las explicaciones",
     "opciones": [
@@ -870,13 +770,11 @@
       "4",
       "5"
     ],
-    "obligatoria": true,
-    "seccion": "",
-    "cond": "si elige \"Sí\" en pregunta 48.0.",
-    "notas": ""
+    "seccion": "05 - Evaluación del encuentro",
+    "cond": "si elige \"Sí\" en pregunta 48.0."
   },
   {
-    "id": "48.c.",
+    "id": "q48c",
     "tipo": "escala",
     "pregunta": "Actitud de las capacitadoras",
     "opciones": [
@@ -886,13 +784,11 @@
       "4",
       "5"
     ],
-    "obligatoria": true,
-    "seccion": "",
-    "cond": "si elige \"Sí\" en pregunta 48.0.",
-    "notas": ""
+    "seccion": "05 - Evaluación del encuentro",
+    "cond": "si elige \"Sí\" en pregunta 48.0."
   },
   {
-    "id": "48.d.",
+    "id": "q48d",
     "tipo": "escala",
     "pregunta": "Uso del tiempo",
     "opciones": [
@@ -900,21 +796,17 @@
       "2",
       "3",
       "4",
-      "8"
+      "5"
     ],
-    "obligatoria": true,
-    "seccion": "",
-    "cond": "si elige \"Sí\" en pregunta 48.0.",
-    "notas": ""
+    "seccion": "05 - Evaluación del encuentro",
+    "cond": "si elige \"Sí\" en pregunta 48.0."
   },
   {
-    "id": "49.",
+    "id": "q49",
     "tipo": "texto",
     "pregunta": "Comentarios y observaciones:",
     "opciones": [],
-    "obligatoria": false,
-    "seccion": "",
-    "cond": "si elige \"Sí\" en pregunta 48.0.",
-    "notas": ""
+    "seccion": "05 - Evaluación del encuentro",
+    "cond": "si elige \"Sí\" en pregunta 48.0."
   }
 ]
