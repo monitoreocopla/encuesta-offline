@@ -1,1 +1,0 @@
-const LISTA_ESCUELAS = [];
