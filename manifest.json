@@ -1,9 +1,9 @@
 {
-  "name": "Encuesta offline con saltos",
+  "name": "Encuesta offline PWA",
   "short_name": "Encuesta",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#f3f4f6",
-  "theme_color": "#2563eb",
+  "background_color": "#121212",
+  "theme_color": "#121212",
   "icons": []
 }
