@@ -9,13 +9,15 @@
   <script defer src="script.js"></script>
 </head>
 <body>
+
   <header>
     <h1>Encuesta offline</h1>
     <p class="subtitle">Versión PWA – funciona sin conexión</p>
   </header>
 
   <main>
-    <!-- 01 - DATOS PERSONALES (para todos) -->
+
+    <!-- 01 - DATOS PERSONALES -->
     <section class="screen" id="screen-01" data-screen="01">
       <h2>01 - Datos personales</h2>
 
@@ -26,14 +28,12 @@
 
       <div class="field">
         <label for="dni">DNI</label>
-        <input type="text" id="dni" data-dni="1" inputmode="numeric" />
-        <small class="hint">Solo números</small>
+        <input type="text" id="dni" data-dni="1" />
       </div>
 
       <div class="field">
         <label for="email">Correo electrónico</label>
-        <input type="email" id="email" data-mail="1" autocomplete="off" />
-        <small class="hint">Debe tener formato nombre@dominio.com</small>
+        <input type="text" id="email" data-mail="1" autocomplete="off" />
       </div>
 
       <div class="field">
@@ -49,112 +49,17 @@
         </select>
       </div>
 
-      <div class="field">
-        <label for="departamento">Departamento (Q5)</label>
-        <select id="departamento">
-          <option value="">Seleccionar…</option>
-          <option value="Depto A">Depto A</option>
-          <option value="Depto B">Depto B</option>
-          <option value="Depto C">Depto C</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="escuela">Escuela (Q7)</label>
-        <input type="text" id="escuela" list="escuelas-list" autocomplete="off" />
-        <datalist id="escuelas-list"></datalist>
-        <small class="hint">Escribí parte del nombre y elegí de la lista</small>
-      </div>
-
-      <!-- CUE-Anexo oculto; se guarda cuando elige la escuela -->
-      <input type="hidden" id="cue_anexo" />
-
       <div class="nav-buttons">
         <button type="button" id="btn-01-next" class="primary">Siguiente</button>
       </div>
     </section>
 
-    <!-- 02 - DIRECTIVOS (solo Director/a y Vicedirector/a) -->
-    <section class="screen" id="screen-02-directivos" data-screen="02" hidden>
-      <h2>02 - Directivos</h2>
-
-      <div class="field">
-        <label for="gestion_directivos">Preguntas para directivos</label>
-        <textarea id="gestion_directivos" rows="4"></textarea>
-      </div>
-
-      <div class="nav-buttons">
-        <button type="button" class="secondary" data-prev="01">Anterior</button>
-        <button type="button" id="btn-02-next" class="primary">Siguiente</button>
-      </div>
-    </section>
-
-    <!-- 03 - DOCENTES (solo Docente de grado) -->
-    <section class="screen" id="screen-03-docentes" data-screen="03" hidden>
-      <h2>03 - Docentes</h2>
-
-      <div class="field">
-        <label for="preg_docentes">Preguntas para docentes</label>
-        <textarea id="preg_docentes" rows="4"></textarea>
-      </div>
-
-      <div class="nav-buttons">
-        <button type="button" class="secondary" data-prev="01">Anterior</button>
-        <button type="button" id="btn-03-next" class="primary">Siguiente</button>
-      </div>
-    </section>
-
-    <!-- 04 - DIRECTIVOS CON GRADO A CARGO / PERSONAL ÚNICO -->
-    <section class="screen" id="screen-04-dir-grado" data-screen="04" hidden>
-      <h2>04 - Directivos con grado a cargo / Personal único</h2>
-
-      <div class="field">
-        <label for="preg_dir_grado">Preguntas específicas de este cargo</label>
-        <textarea id="preg_dir_grado" rows="4"></textarea>
-      </div>
-
-      <div class="nav-buttons">
-        <button type="button" class="secondary" data-prev="01">Anterior</button>
-        <button type="button" id="btn-04-next" class="primary">Siguiente</button>
-      </div>
-    </section>
-
-    <!-- 05 - EVALUACIÓN DEL ENCUENTRO (para todos) -->
-    <section class="screen" id="screen-05-eval" data-screen="05" hidden>
-      <h2>05 - Evaluación del encuentro</h2>
-
-      <div class="field">
-        <label for="satisfaccion">En general, &iquest;qu&eacute; tan satisfecho/a quedaste con el encuentro?</label>
-        <select id="satisfaccion">
-          <option value="">Seleccionar…</option>
-          <option value="1">Nada satisfecho/a</option>
-          <option value="2">Poco satisfecho/a</option>
-          <option value="3">Algo satisfecho/a</option>
-          <option value="4">Bastante satisfecho/a</option>
-          <option value="5">Muy satisfecho/a</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="comentarios">Comentarios o sugerencias</label>
-        <textarea id="comentarios" rows="4"></textarea>
-      </div>
-
-      <div class="nav-buttons">
-        <button type="button" class="secondary" data-prev="dynamic">Anterior</button>
-        <button type="button" id="btn-05-finalizar" class="primary">Finalizar</button>
-      </div>
-    </section>
-
-    <!-- Pantalla final -->
     <section class="screen" id="screen-final" hidden>
       <h2>¡Gracias!</h2>
-      <p>Las respuestas quedaron guardadas en el dispositivo. Cuando haya conexión se pueden sincronizar.</p>
+      <p>Las respuestas quedaron guardadas en el dispositivo.</p>
     </section>
+
   </main>
 
-  <footer>
-    <small>Encuesta offline PWA – demo estructural para integración con tu base real.</small>
-  </footer>
 </body>
 </html>
