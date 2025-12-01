@@ -1,9 +1,11 @@
-const CACHE_NAME = "encuesta-offline-v3";
+const CACHE_NAME = "encuesta-offline-v5";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./script.js",
+  "./departamentos.js",
+  "./escuelas.js",
   "./manifest.json"
 ];
 

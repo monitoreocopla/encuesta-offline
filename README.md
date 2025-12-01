@@ -1,14 +1,34 @@
-# Encuesta offline – PWA (versión conectada al Excel)
+# Encuesta offline – PWA
 
-Esta versión:
+Esta versión incluye:
 
-- Usa los departamentos de la pregunta de departamento definidos en la hoja `formulario`.
-- Usa las escuelas reales de la hoja `escuelas` (nombre, número y CUE-Anexo).
-- Filtra las escuelas por departamento.
-- Guarda el CUE-Anexo en un campo oculto.
-- Aplica lógica de navegación según el cargo.
-- Valida en vivo DNI (solo números) y correo electrónico.
-- Guarda todas las respuestas en `localStorage` bajo la clave `encuesta_respuestas`.
-- Incluye service worker y manifest para funcionar offline.
+- Pantallas separadas:
+  - Datos personales
+  - Preguntas para directivos
+  - Preguntas para docentes
+  - Preguntas para directivos con grado a cargo y personal único
+  - Evaluación del encuentro
+  - Pantalla final de agradecimiento
 
-Los nombres de sección y los textos visibles *no* muestran códigos de pregunta ni números de sección.
+- Lógica de navegación según el cargo:
+  - Director/a y Vicedirector/a pasan por la pantalla de directivos.
+  - Docente de grado pasa por la pantalla de docentes.
+  - Directivo con grado a cargo y Personal único pasan por la pantalla de directivos con grado a cargo / personal único.
+  - Quienes seleccionan Otro van directo de Datos personales a Evaluación.
+
+- Validación en vivo:
+  - DNI: solo números.
+  - Correo electrónico: formato básico nombre@dominio.com.
+
+- Departamento y escuela:
+  - Los departamentos se cargan a partir de la hoja de escuelas.
+  - Las escuelas se filtran por departamento.
+  - Al seleccionar una escuela, se guarda el CUE-Anexo de manera oculta.
+
+- Guardado local:
+  - Cada respuesta se guarda en localStorage bajo la clave `encuesta_respuestas`.
+  - Se registra una marca temporal (`timestamp`) al finalizar.
+
+- PWA:
+  - Service worker simple para funcionamiento offline.
+  - `manifest.json` configurado con tema oscuro.
