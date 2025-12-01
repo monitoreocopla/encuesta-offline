@@ -1,9 +1,9 @@
 {
-  "name": "Encuesta Offline",
+  "name": "Encuesta offline",
   "short_name": "Encuesta",
   "start_url": "index.html",
   "display": "standalone",
-  "theme_color": "#121212",
   "background_color": "#121212",
+  "theme_color": "#121212",
   "icons": []
 }

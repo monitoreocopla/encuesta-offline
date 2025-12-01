@@ -2,43 +2,48 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Encuesta offline - PWA</title>
+  <title>Encuesta offline</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
   <script defer src="script.js"></script>
 </head>
 <body>
-
   <header>
     <h1>Encuesta offline</h1>
-    <p class="subtitle">Versión PWA – funciona sin conexión</p>
+    <p class="subtitle">Funciona sin conexión</p>
   </header>
 
   <main>
-
-    <!-- 01 - DATOS PERSONALES -->
-    <section class="screen" id="screen-01" data-screen="01">
-      <h2>01 - Datos personales</h2>
+    <!-- Datos personales (para todas las personas) -->
+    <section class="screen" id="screen-datos" data-screen="datos">
+      <h2>Datos personales</h2>
 
       <div class="field">
-        <label for="nombre">Nombre y apellido</label>
+        <label for="apellido">Apellido</label>
+        <input type="text" id="apellido" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="nombre">Nombre</label>
         <input type="text" id="nombre" autocomplete="off" />
       </div>
 
       <div class="field">
+        <label for="correo">Dirección de correo electrónico</label>
+        <input type="email" id="correo" data-mail="1" autocomplete="off" />
+        <small class="hint">Debe tener el formato nombre@dominio.com</small>
+      </div>
+
+      <div class="field">
         <label for="dni">DNI</label>
-        <input type="text" id="dni" data-dni="1" />
+        <input type="text" id="dni" data-dni="1" inputmode="numeric" />
+        <small class="hint">Solo números</small>
       </div>
 
       <div class="field">
-        <label for="email">Correo electrónico</label>
-        <input type="text" id="email" data-mail="1" autocomplete="off" />
-      </div>
-
-      <div class="field">
-        <label for="Q8">Cargo (Q8)</label>
-        <select id="Q8">
+        <label for="cargo">Cargo</label>
+        <select id="cargo">
           <option value="">Seleccionar…</option>
           <option value="Docente de grado">Docente de grado</option>
           <option value="Director/a">Director/a</option>
@@ -49,17 +54,130 @@
         </select>
       </div>
 
+      <div class="field">
+        <label for="departamento">Departamento al que pertenece la escuela en la que trabaja</label>
+        <select id="departamento">
+          <option value="">Seleccionar…</option>
+          <option value="Cachi">Cachi</option>
+          <option value="Cafayate">Cafayate</option>
+          <option value="Capital">Capital</option>
+          <option value="Cerrillos">Cerrillos</option>
+          <option value="Chicoana">Chicoana</option>
+          <option value="General Güemes">General Güemes</option>
+          <option value="Guachipas">Guachipas</option>
+          <option value="La Caldera">La Caldera</option>
+          <option value="La Candelaria">La Candelaria</option>
+          <option value="La Poma">La Poma</option>
+          <option value="La Viña">La Viña</option>
+          <option value="Los Andes">Los Andes</option>
+          <option value="Metán">Metán</option>
+          <option value="Molinos">Molinos</option>
+          <option value="Orán">Orán</option>
+          <option value="Rivadavia">Rivadavia</option>
+          <option value="Rosario de la Frontera">Rosario de la Frontera</option>
+          <option value="Rosario de Lerma">Rosario de Lerma</option>
+          <option value="San Carlos">San Carlos</option>
+          <option value="San Martín">San Martín</option>
+          <option value="Santa Victoria">Santa Victoria</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="escuela">Escuela</label>
+        <input type="text" id="escuela" list="escuelas-list" autocomplete="off" />
+        <datalist id="escuelas-list"></datalist>
+        <small class="hint">Escriba parte del nombre o número y luego elija de la lista</small>
+      </div>
+
+      <!-- CUE-Anexo oculto; se completa automáticamente al elegir escuela -->
+      <input type="hidden" id="cue_anexo" />
+
       <div class="nav-buttons">
-        <button type="button" id="btn-01-next" class="primary">Siguiente</button>
+        <button type="button" id="btn-datos-siguiente" class="primary">Siguiente</button>
       </div>
     </section>
 
-    <section class="screen" id="screen-final" hidden>
-      <h2>¡Gracias!</h2>
-      <p>Las respuestas quedaron guardadas en el dispositivo.</p>
+    <!-- Directivos: directoras y vicedirectoras -->
+    <section class="screen" id="screen-directivos" data-screen="directivos" hidden>
+      <h2>Preguntas para equipos directivos</h2>
+
+      <div class="field">
+        <label for="gestion_directivos">Preguntas específicas para dirección y vicedirección</label>
+        <textarea id="gestion_directivos" rows="4"></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary" data-prev="datos">Anterior</button>
+        <button type="button" id="btn-directivos-siguiente" class="primary">Siguiente</button>
+      </div>
     </section>
 
+    <!-- Docentes de grado -->
+    <section class="screen" id="screen-docentes" data-screen="docentes" hidden>
+      <h2>Preguntas para docentes de grado</h2>
+
+      <div class="field">
+        <label for="preg_docentes">Preguntas específicas para docentes</label>
+        <textarea id="preg_docentes" rows="4"></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary" data-prev="datos">Anterior</button>
+        <button type="button" id="btn-docentes-siguiente" class="primary">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- Directivos con grado a cargo y personal único -->
+    <section class="screen" id="screen-dir-grado" data-screen="dir-grado" hidden>
+      <h2>Preguntas para directivos con grado a cargo y personal único</h2>
+
+      <div class="field">
+        <label for="preg_dir_grado">Preguntas específicas para este cargo</label>
+        <textarea id="preg_dir_grado" rows="4"></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary" data-prev="datos">Anterior</button>
+        <button type="button" id="btn-dir-grado-siguiente" class="primary">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- Evaluación del encuentro (para todas las personas) -->
+    <section class="screen" id="screen-eval" data-screen="eval" hidden>
+      <h2>Evaluación del encuentro</h2>
+
+      <div class="field">
+        <label for="satisfaccion">En general, ¿qué tan satisfecha/o quedó con el encuentro?</label>
+        <select id="satisfaccion">
+          <option value="">Seleccionar…</option>
+          <option value="1">Nada satisfecha/o</option>
+          <option value="2">Poco satisfecha/o</option>
+          <option value="3">Algo satisfecha/o</option>
+          <option value="4">Bastante satisfecha/o</option>
+          <option value="5">Muy satisfecha/o</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="comentarios">Comentarios o sugerencias</label>
+        <textarea id="comentarios" rows="4"></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary" data-prev="dinamico">Anterior</button>
+        <button type="button" id="btn-finalizar" class="primary">Finalizar</button>
+      </div>
+    </section>
+
+    <!-- Pantalla final -->
+    <section class="screen" id="screen-final" hidden>
+      <h2>Gracias</h2>
+      <p>Las respuestas quedaron guardadas en este dispositivo.</p>
+    </section>
   </main>
 
+  <footer>
+    <small>Base PWA para la encuesta. Adaptar textos y campos según necesidad.</small>
+  </footer>
 </body>
 </html>
