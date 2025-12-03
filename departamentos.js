@@ -1,0 +1,1 @@
+const DEPARTAMENTOS = ['CAPITAL','OTRO'];
