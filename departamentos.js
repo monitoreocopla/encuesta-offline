@@ -1,1 +1,0 @@
-const DEPARTAMENTOS = ['CAPITAL','OTRO'];
