@@ -1,0 +1,8 @@
+{
+  "name": "Encuesta Offline - Cómo estamos avanzando",
+  "short_name": "Encuesta",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f7f7f7",
+  "theme_color": "#4f8cff"
+}

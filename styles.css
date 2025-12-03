@@ -1,0 +1,132 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f7f7f7;
+  color: #222;
+  margin: 0;
+}
+
+header.bienvenida {
+  background: #ffffff;
+  border-bottom: 1px solid #ddd;
+  padding: 1.5rem 1.75rem;
+}
+
+header.bienvenida h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+}
+
+header.bienvenida p {
+  margin: 0;
+  max-width: 40rem;
+}
+
+main {
+  max-width: 800px;
+  margin: 1.5rem auto 2rem;
+  padding: 0 1rem 2rem;
+}
+
+.screen {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 1.5rem 1.5rem 1.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.field label,
+.field legend {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 0.55rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font: inherit;
+  background: #fff;
+  color: #222;
+}
+
+.field input[disabled] {
+  background: #eee;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+.option {
+  display: block;
+  font-weight: 400;
+  margin-bottom: 0.25rem;
+}
+
+.option input {
+  margin-right: 0.4rem;
+}
+
+.info {
+  background: #f3f6ff;
+  border-left: 3px solid #4f8cff;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+button {
+  font: inherit;
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  border: none;
+  cursor: pointer;
+}
+
+button.primary {
+  background: #4f8cff;
+  color: #fff;
+}
+
+button.secondary {
+  background: #e3e3e3;
+  color: #222;
+}
+
+.input-error {
+  border-color: #ff4f6a !important;
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 0 0.75rem 2rem;
+  }
+}

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encuesta - Cómo estamos avanzando</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <header class="bienvenida">
+    <h1>Encuesta "Cómo estamos avanzando"</h1>
+    <p>Antes de comenzar a responder el formulario, te pedimos que completes tus datos personales y luego las preguntas correspondientes a tu rol.</p>
+  </header>
+
+  <main>
+    <section id="pantalla-datos" class="screen" hidden>
+  <h2>Datos personales</h2>
+<input type="hidden" id="fecha" name="fecha">
+<div class="info">Antes de comenzar a responder el formulario “Cómo estamos avanzando”, necesitamos que lea algunas cuestiones informativas.
+
+El objetivo de este instrumento es poder conocer con mayor profundidad el funcionamiento del plan para poder monitorear las diferentes acciones, tener más detalles de la implementación y mejorar la propuesta de trabajo.
+
+Es muy importante para nosotros ser cuidadosos con la información recolectada para proteger a quienes participan y responden la encuesta. Estamos trabajando constantemente para cumplir ese objetivo, y en este marco es importante ofrecerle la siguiente información antes de avanzar:
+
+Los datos personales que usted proporcione a través de este formulario serán utilizados exclusivamente para el monitoreo del Programa de Fortalecimiento de Alfabetización. El tratamiento de los mismos se llevará a cabo conforme a lo dispuesto por la Ley N° 25.326 de Protección de Datos Personales, garantizando su confidencialidad y seguridad.
+
+El titular de los datos tiene derecho a solicitar el acceso, la rectificación o la supresión de la información provista, así como a ejercer los demás derechos establecidos en la Ley N° 25.326. Para ello, podrá dirigirse al ministerio de Salta, que es responsable del tratamiento de los datos.</div>
+<div class="field"><label for="correo">Dirección de correo electrónico</label><input type="email" id="correo" name="correo" data-mail="1" required></div>
+<div class="field"><label for="q1">Apellido:</label><input type="text" id="q1" name="q1" required></div>
+<div class="field"><label for="q2">Nombre:</label><input type="text" id="q2" name="q2" required></div>
+<div class="field"><label for="q3">Número de teléfono celular (sin 0 ni 15. Ej: 3875102233):</label><input type="tel" id="q3" name="q3" required></div>
+<div class="field"><label for="q4">DNI (sin puntos):</label><input type="text" id="q4" name="q4" data-dni="1" required></div>
+<div class="field"><label for="departamento">Departamento al que pertenece la escuela en la que trabaja:</label><select id="departamento" name="departamento" required><option value="">Seleccionar…</option></select></div>
+<div class="field"><label for="escuela">Nombre y número de la escuela:</label><input list="lista-escuelas" id="escuela" name="escuela" disabled><datalist id="lista-escuelas"></datalist><input type="hidden" id="cue_anexo" name="cue_anexo"></div>
+<div class="field"><label for="q8">Cargo:</label><select id="q8" name="q8" required><option value="">Seleccionar…</option>
+  <option value="Docente de grado">Docente de grado</option>
+  <option value="Director/a">Director/a</option>
+  <option value="Vicedirector/a">Vicedirector/a</option>
+  <option value="Directivo con grado a cargo">Directivo con grado a cargo</option>
+  <option value="Personal único">Personal único</option>
+  <option value="Otro">Otro</option>
+</select></div>
+<fieldset class="field"><legend>Turno en que se desempeña en esta escuela:</legend>
+  <label class="option"><input type="radio" name="q9" id="q9_0" value="Mañana" required> Mañana</label>
+  <label class="option"><input type="radio" name="q9" id="q9_1" value="Tarde"> Tarde</label>
+  <label class="option"><input type="radio" name="q9" id="q9_2" value="Ambos turnos"> Ambos turnos</label>
+  <label class="option"><input type="radio" name="q9" id="q9_3" value="Jornada completa"> Jornada completa</label>
+  <label class="option"><input type="radio" name="q9" id="q9_4" value="Jornada extendida"> Jornada extendida</label>
+</fieldset>
+  <div class="nav"><button type="button" id="btn-datos-siguiente" class="primary">Siguiente</button></div>
+</section>
+<section id="pantalla-directivos" class="screen" hidden>
+  <h2>Directivos</h2>
+<div class="field"><label for="q10">¿En qué año comenzó a participar del programa?</label><select id="q10" name="q10" required><option value="">Seleccionar…</option>
+  <option value="2021">2021</option>
+  <option value="2022">2022</option>
+  <option value="2023">2023</option>
+  <option value="2024">2024</option>
+  <option value="2025">2025</option>
+</select></div>
+<div class="field"><label for="q11a1">¿A cuántos encuentros del programa asistió este año?</label><select id="q11a1" name="q11a1" required><option value="">Seleccionar…</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="6">6</option>
+</select></div>
+<fieldset class="field"><legend>¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):</legend>
+  <label class="option"><input type="radio" name="q11a2" id="q11a2_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q11a2" id="q11a2_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q11a2" id="q11a2_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q11a2" id="q11a2_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q11a2" id="q11a2_4" value="5"> 5</label>
+  <label class="option"><input type="radio" name="q11a2" id="q11a2_5" value="6"> 6</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuántos docentes de la escuela considera usted que están implementando las propuestas del programa?</legend>
+  <label class="option"><input type="radio" name="q12" id="q12_0" value="Todos" required> Todos</label>
+  <label class="option"><input type="radio" name="q12" id="q12_1" value="La mayoría"> La mayoría</label>
+  <label class="option"><input type="radio" name="q12" id="q12_2" value="Algunos"> Algunos</label>
+  <label class="option"><input type="radio" name="q12" id="q12_3" value="Muy pocos"> Muy pocos</label>
+  <label class="option"><input type="radio" name="q12" id="q12_4" value="Ninguno"> Ninguno</label>
+</fieldset>
+<fieldset class="field"><legend>¿Nota cambios en la escuela a partir de la implementación del programa?</legend>
+  <label class="option"><input type="radio" name="q13" id="q13_0" value="Noto cambios pero no son positivos" required> Noto cambios pero no son positivos</label>
+  <label class="option"><input type="radio" name="q13" id="q13_1" value="No noto cambios"> No noto cambios</label>
+  <label class="option"><input type="radio" name="q13" id="q13_2" value="Noto cambios favorables"> Noto cambios favorables</label>
+</fieldset>
+<div class="field"><label for="q14">Si notó cambios, le pedimos que especifique a continuación:</label><input type="text" id="q14" name="q14"></div>
+<fieldset class="field"><legend>En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?</legend>
+  <label class="option"><input type="radio" name="q15" id="q15_0" value="No tengo chicos ni chicas que me preocupen" required> No tengo chicos ni chicas que me preocupen</label>
+  <label class="option"><input type="radio" name="q15" id="q15_1" value="Tengo menos del 10%"> Tengo menos del 10%</label>
+  <label class="option"><input type="radio" name="q15" id="q15_2" value="Tengo entre el 10 y el 30%"> Tengo entre el 10 y el 30%</label>
+  <label class="option"><input type="radio" name="q15" id="q15_3" value="Tengo entre el 30 y el 60%"> Tengo entre el 30 y el 60%</label>
+  <label class="option"><input type="radio" name="q15" id="q15_4" value="Tengo más del 60%"> Tengo más del 60%</label>
+</fieldset>
+<fieldset class="field"><legend>¿Enfrenta dificultades para la implementación del Plan?</legend>
+  <label class="option"><input type="radio" name="q161" id="q161_0" value="Sí" required> Sí</label>
+  <label class="option"><input type="radio" name="q161" id="q161_1" value="No"> No</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuáles de las siguientes dificultades encuentra para la implementación del plan?</legend>
+  <label class="option"><input type="checkbox" name="q162" id="q162_0" value="Falta de tiempo de clase"> Falta de tiempo de clase</label>
+  <label class="option"><input type="checkbox" name="q162" id="q162_1" value="Inasistencia de estudiantes"> Inasistencia de estudiantes</label>
+  <label class="option"><input type="checkbox" name="q162" id="q162_2" value="Dificultades de organización institucional"> Dificultades de organización institucional</label>
+  <label class="option"><input type="checkbox" name="q162" id="q162_3" value="Alta rotación docente"> Alta rotación docente</label>
+  <label class="option"><input type="checkbox" name="q162" id="q162_4" value="Falta de acompañamiento familiar"> Falta de acompañamiento familiar</label>
+  <label class="option"><input type="checkbox" name="q162" id="q162_5" value="Otra"> Otra</label>
+</fieldset>
+<fieldset class="field"><legend>Si ya ha recibido la visita de la Orientadora Pedagógica, ¿cómo evalúa el vínculo que se está estableciendo?</legend>
+  <label class="option"><input type="radio" name="q17" id="q17_0" value="Muy bueno" required> Muy bueno</label>
+  <label class="option"><input type="radio" name="q17" id="q17_1" value="Adecuado"> Adecuado</label>
+  <label class="option"><input type="radio" name="q17" id="q17_2" value="Nada adecuado"> Nada adecuado</label>
+  <label class="option"><input type="radio" name="q17" id="q17_3" value="Todavía no he recibido la visita de la Orientadora Pedagógica"> Todavía no he recibido la visita de la Orientadora Pedagógica</label>
+  <label class="option"><input type="radio" name="q17" id="q17_4" value="Otra"> Otra</label>
+</fieldset>
+<fieldset class="field"><legend>¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.</legend>
+  <label class="option"><input type="checkbox" name="q18" id="q18_0" value="Aportan materiales y diferentes recursos para utilizar con los alumnos"> Aportan materiales y diferentes recursos para utilizar con los alumnos</label>
+  <label class="option"><input type="checkbox" name="q18" id="q18_1" value="Orientan y apoyan"> Orientan y apoyan</label>
+  <label class="option"><input type="checkbox" name="q18" id="q18_2" value="Dan herramientas para trabajar en el aula"> Dan herramientas para trabajar en el aula</label>
+  <label class="option"><input type="checkbox" name="q18" id="q18_3" value="Tienen buena predisposición"> Tienen buena predisposición</label>
+  <label class="option"><input type="checkbox" name="q18" id="q18_4" value="Nos mantiene conectaods con el plan"> Nos mantiene conectaods con el plan</label>
+  <label class="option"><input type="checkbox" name="q18" id="q18_5" value="Ninguna"> Ninguna</label>
+</fieldset>
+<fieldset class="field escala"><legend>¿Considera que el programa aporta a su formación profesional? ¿En qué medida?</legend>
+  <label class="option"><input type="radio" name="q19" id="q19_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q19" id="q19_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q19" id="q19_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q19" id="q19_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q19" id="q19_4" value="5"> 5</label>
+</fieldset>
+  <div class="nav"><button type="button" class="secondary" data-prev="datos">Volver</button><button type="button" class="primary siguiente-evaluacion">Siguiente</button></div>
+</section>
+<section id="pantalla-docentes" class="screen" hidden>
+  <h2>Docentes</h2>
+<fieldset class="field"><legend>Grado que tiene a cargo:</legend>
+  <label class="option"><input type="radio" name="q20" id="q20_0" value="Primero" required> Primero</label>
+  <label class="option"><input type="radio" name="q20" id="q20_1" value="Segundo"> Segundo</label>
+  <label class="option"><input type="radio" name="q20" id="q20_2" value="Tercero"> Tercero</label>
+  <label class="option"><input type="radio" name="q20" id="q20_3" value="Plurigrado/Pluriaño"> Plurigrado/Pluriaño</label>
+</fieldset>
+<fieldset class="field"><legend>¿A cuántos encuentros del programa asistió este año?</legend>
+  <label class="option"><input type="radio" name="q21a1" id="q21a1_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q21a1" id="q21a1_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q21a1" id="q21a1_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q21a1" id="q21a1_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q21a1" id="q21a1_4" value="5"> 5</label>
+  <label class="option"><input type="radio" name="q21a1" id="q21a1_5" value="6"> 6</label>
+</fieldset>
+<fieldset class="field"><legend>¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):</legend>
+  <label class="option"><input type="radio" name="q21a2" id="q21a2_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q21a2" id="q21a2_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q21a2" id="q21a2_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q21a2" id="q21a2_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q21a2" id="q21a2_4" value="5"> 5</label>
+  <label class="option"><input type="radio" name="q21a2" id="q21a2_5" value="6"> 6</label>
+</fieldset>
+<fieldset class="field"><legend>Si tiene plurigrado, especifique qué grados están agrupados:</legend>
+  <label class="option"><input type="radio" name="q22" id="q22_0" value="Primero" required> Primero</label>
+  <label class="option"><input type="radio" name="q22" id="q22_1" value="Segundo"> Segundo</label>
+  <label class="option"><input type="radio" name="q22" id="q22_2" value="Tercero"> Tercero</label>
+  <label class="option"><input type="radio" name="q22" id="q22_3" value="Cuarto"> Cuarto</label>
+  <label class="option"><input type="radio" name="q22" id="q22_4" value="Quinto"> Quinto</label>
+  <label class="option"><input type="radio" name="q22" id="q22_5" value="Sexto"> Sexto</label>
+</fieldset>
+<fieldset class="field"><legend>¿En qué año comenzó a participar del programa?</legend>
+  <label class="option"><input type="radio" name="q23" id="q23_0" value="2021" required> 2021</label>
+  <label class="option"><input type="radio" name="q23" id="q23_1" value="2022"> 2022</label>
+  <label class="option"><input type="radio" name="q23" id="q23_2" value="2023"> 2023</label>
+  <label class="option"><input type="radio" name="q23" id="q23_3" value="2024"> 2024</label>
+  <label class="option"><input type="radio" name="q23" id="q23_4" value="2025"> 2025</label>
+</fieldset>
+<fieldset class="field"><legend>En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?</legend>
+  <label class="option"><input type="radio" name="q24" id="q24_0" value="No tengo chicos ni chicas que me preocupen" required> No tengo chicos ni chicas que me preocupen</label>
+  <label class="option"><input type="radio" name="q24" id="q24_1" value="Tengo menos del 10%"> Tengo menos del 10%</label>
+  <label class="option"><input type="radio" name="q24" id="q24_2" value="Tengo entre el 10 y el 30%"> Tengo entre el 10 y el 30%</label>
+  <label class="option"><input type="radio" name="q24" id="q24_3" value="Tengo entre el 30 y el 60%"> Tengo entre el 30 y el 60%</label>
+  <label class="option"><input type="radio" name="q24" id="q24_4" value="Tengo más del 60%"> Tengo más del 60%</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuántas veces por semana realizan las actividades de "Esta semana escribimos"?</legend>
+  <label class="option"><input type="radio" name="q25" id="q25_0" value="No realizamos las actividades de "Esta semana escribimos"" required> No realizamos las actividades de "Esta semana escribimos"</label>
+  <label class="option"><input type="radio" name="q25" id="q25_1" value="1 vez por semana"> 1 vez por semana</label>
+  <label class="option"><input type="radio" name="q25" id="q25_2" value="2 veces por semana"> 2 veces por semana</label>
+  <label class="option"><input type="radio" name="q25" id="q25_3" value="3 veces por semana"> 3 veces por semana</label>
+  <label class="option"><input type="radio" name="q25" id="q25_4" value="Más de 3 veces por semana"> Más de 3 veces por semana</label>
+  <label class="option"><input type="radio" name="q25" id="q25_5" value="No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)"> No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuánto tiempo les toma realizar las actividades de "Esta semana escribimos"?</legend>
+  <label class="option"><input type="radio" name="q26" id="q26_0" value="Menos de 10 minutos" required> Menos de 10 minutos</label>
+  <label class="option"><input type="radio" name="q26" id="q26_1" value="Entre 10 y 30 minutos"> Entre 10 y 30 minutos</label>
+  <label class="option"><input type="radio" name="q26" id="q26_2" value="Entre 30 y 60 minutos"> Entre 30 y 60 minutos</label>
+  <label class="option"><input type="radio" name="q26" id="q26_3" value="Más de 60 minutos"> Más de 60 minutos</label>
+  <label class="option"><input type="radio" name="q26" id="q26_4" value="No corresponde"> No corresponde</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuánto cree que cambió su manera de enseñar desde que participa del programa?</legend>
+  <label class="option"><input type="radio" name="q27" id="q27_0" value="Mucho" required> Mucho</label>
+  <label class="option"><input type="radio" name="q27" id="q27_1" value="Bastante"> Bastante</label>
+  <label class="option"><input type="radio" name="q27" id="q27_2" value="Poco"> Poco</label>
+  <label class="option"><input type="radio" name="q27" id="q27_3" value="Nada"> Nada</label>
+</fieldset>
+<fieldset class="field"><legend>¿Enfrenta dificultades para la implementación del Plan?</legend>
+  <label class="option"><input type="radio" name="q271" id="q271_0" value="Sí" required> Sí</label>
+  <label class="option"><input type="radio" name="q271" id="q271_1" value="No"> No</label>
+</fieldset>
+<div class="field"><label for="q272">¿Puede especificar cuáles?</label><input type="text" id="q272" name="q272" required></div>
+<fieldset class="field"><legend>¿Comparte material audiovisual con las familias a través de WhatsApp?</legend>
+  <label class="option"><input type="radio" name="q28" id="q28_0" value="Siempre" required> Siempre</label>
+  <label class="option"><input type="radio" name="q28" id="q28_1" value="Algunas veces"> Algunas veces</label>
+  <label class="option"><input type="radio" name="q28" id="q28_2" value="Nunca"> Nunca</label>
+  <label class="option"><input type="radio" name="q28" id="q28_3" value="Otro"> Otro</label>
+</fieldset>
+<fieldset class="field"><legend>¿Utilizan en el aula el material complementario?</legend>
+  <label class="option"><input type="radio" name="q29" id="q29_0" value="Sí" required> Sí</label>
+  <label class="option"><input type="radio" name="q29" id="q29_1" value="No"> No</label>
+</fieldset>
+<fieldset class="field"><legend>¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.</legend>
+  <label class="option"><input type="radio" name="q30" id="q30_0" value="Aportan materiales y diferentes recursos para utilizar con los alumnos" required> Aportan materiales y diferentes recursos para utilizar con los alumnos</label>
+  <label class="option"><input type="radio" name="q30" id="q30_1" value="Orientan y apoyan"> Orientan y apoyan</label>
+  <label class="option"><input type="radio" name="q30" id="q30_2" value="Dan herramientas para trabajar en el aula"> Dan herramientas para trabajar en el aula</label>
+  <label class="option"><input type="radio" name="q30" id="q30_3" value="Tienen buena predisposición"> Tienen buena predisposición</label>
+  <label class="option"><input type="radio" name="q30" id="q30_4" value="Nos mantiene conectaods con el plan"> Nos mantiene conectaods con el plan</label>
+  <label class="option"><input type="radio" name="q30" id="q30_5" value="Ninguna"> Ninguna</label>
+</fieldset>
+<fieldset class="field escala"><legend>¿Considera que el programa aporta a su formación profesional? ¿En qué medida?</legend>
+  <label class="option"><input type="radio" name="q31" id="q31_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q31" id="q31_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q31" id="q31_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q31" id="q31_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q31" id="q31_4" value="5"> 5</label>
+</fieldset>
+  <div class="nav"><button type="button" class="secondary" data-prev="datos">Volver</button><button type="button" class="primary siguiente-evaluacion">Siguiente</button></div>
+</section>
+<section id="pantalla-dir-grado" class="screen" hidden>
+  <h2>Directivos con grado a cargo</h2>
+<fieldset class="field"><legend>¿En qué año comenzó a participar del programa?</legend>
+  <label class="option"><input type="radio" name="q32" id="q32_0" value="2021" required> 2021</label>
+  <label class="option"><input type="radio" name="q32" id="q32_1" value="2022"> 2022</label>
+  <label class="option"><input type="radio" name="q32" id="q32_2" value="2023"> 2023</label>
+  <label class="option"><input type="radio" name="q32" id="q32_3" value="2024"> 2024</label>
+  <label class="option"><input type="radio" name="q32" id="q32_4" value="2025"> 2025</label>
+</fieldset>
+<fieldset class="field"><legend>¿A cuántos encuentros del programa asistió este año?</legend>
+  <label class="option"><input type="radio" name="q33a1" id="q33a1_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q33a1" id="q33a1_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q33a1" id="q33a1_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q33a1" id="q33a1_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q33a1" id="q33a1_4" value="5"> 5</label>
+  <label class="option"><input type="radio" name="q33a1" id="q33a1_5" value="6"> 6</label>
+</fieldset>
+<fieldset class="field"><legend>¿A cuántos encuentros del programa asistió este año? (incluyendo virtuales y presenciales):</legend>
+  <label class="option"><input type="radio" name="q33a2" id="q33a2_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q33a2" id="q33a2_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q33a2" id="q33a2_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q33a2" id="q33a2_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q33a2" id="q33a2_4" value="5"> 5</label>
+  <label class="option"><input type="radio" name="q33a2" id="q33a2_5" value="6"> 6</label>
+</fieldset>
+<fieldset class="field"><legend>¿Nota cambios en la escuela a partir de la implementación del programa?</legend>
+  <label class="option"><input type="radio" name="q34" id="q34_0" value="Noto cambios pero no son positivos" required> Noto cambios pero no son positivos</label>
+  <label class="option"><input type="radio" name="q34" id="q34_1" value="No noto cambios"> No noto cambios</label>
+  <label class="option"><input type="radio" name="q34" id="q34_2" value="Noto cambios favorables"> Noto cambios favorables</label>
+</fieldset>
+<div class="field"><label for="q35">Si notó cambios, le pedimos que especifique a continuación:</label><input type="text" id="q35" name="q35"></div>
+<fieldset class="field"><legend>¿Enfrenta dificultades para la implementación del Plan?</legend>
+  <label class="option"><input type="radio" name="q361" id="q361_0" value="Sí" required> Sí</label>
+  <label class="option"><input type="radio" name="q361" id="q361_1" value="No"> No</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuáles de las siguientes dificultades encuentra para la implementación del plan?</legend>
+  <label class="option"><input type="checkbox" name="q362" id="q362_0" value="Falta de tiempo de clase"> Falta de tiempo de clase</label>
+  <label class="option"><input type="checkbox" name="q362" id="q362_1" value="Inasistencia de estudiantes"> Inasistencia de estudiantes</label>
+  <label class="option"><input type="checkbox" name="q362" id="q362_2" value="Dificultades de organización institucional"> Dificultades de organización institucional</label>
+  <label class="option"><input type="checkbox" name="q362" id="q362_3" value="Alta rotación docente"> Alta rotación docente</label>
+  <label class="option"><input type="checkbox" name="q362" id="q362_4" value="Falta de acompañamiento familiar"> Falta de acompañamiento familiar</label>
+  <label class="option"><input type="checkbox" name="q362" id="q362_5" value="Otra"> Otra</label>
+</fieldset>
+<fieldset class="field"><legend>Si ya ha recibido la visita de la Orientadora Pedagógica, ¿Cómo evalúa el vínculo que se está estableciendo?</legend>
+  <label class="option"><input type="radio" name="q37" id="q37_0" value="Muy bueno" required> Muy bueno</label>
+  <label class="option"><input type="radio" name="q37" id="q37_1" value="Adecuado"> Adecuado</label>
+  <label class="option"><input type="radio" name="q37" id="q37_2" value="Nada adecuado"> Nada adecuado</label>
+  <label class="option"><input type="radio" name="q37" id="q37_3" value="Todavía no he recibido la visita de la Orientadora Pedagógica"> Todavía no he recibido la visita de la Orientadora Pedagógica</label>
+  <label class="option"><input type="radio" name="q37" id="q37_4" value="Otra"> Otra</label>
+</fieldset>
+<fieldset class="field"><legend>Grado que tiene a cargo:</legend>
+  <label class="option"><input type="radio" name="q38" id="q38_0" value="Primero" required> Primero</label>
+  <label class="option"><input type="radio" name="q38" id="q38_1" value="Segundo"> Segundo</label>
+  <label class="option"><input type="radio" name="q38" id="q38_2" value="Tercero"> Tercero</label>
+  <label class="option"><input type="radio" name="q38" id="q38_3" value="Plurigrado/Pluriaño/Personal único"> Plurigrado/Pluriaño/Personal único</label>
+</fieldset>
+<fieldset class="field"><legend>Si tiene plurigrado, especifique qué grados están agrupados:</legend>
+  <label class="option"><input type="radio" name="q39" id="q39_0" value="Primero" required> Primero</label>
+  <label class="option"><input type="radio" name="q39" id="q39_1" value="Segundo"> Segundo</label>
+  <label class="option"><input type="radio" name="q39" id="q39_2" value="Tercero"> Tercero</label>
+  <label class="option"><input type="radio" name="q39" id="q39_3" value="CUarto"> CUarto</label>
+  <label class="option"><input type="radio" name="q39" id="q39_4" value="Quinto"> Quinto</label>
+  <label class="option"><input type="radio" name="q39" id="q39_5" value="Sexto"> Sexto</label>
+</fieldset>
+<fieldset class="field"><legend>En relación con la alfabetización, ¿tiene chicos y chicas cuyo nivel de conocimiento le preocupa?</legend>
+  <label class="option"><input type="radio" name="q40" id="q40_0" value="No tengo chicos ni chicas que me preocupen" required> No tengo chicos ni chicas que me preocupen</label>
+  <label class="option"><input type="radio" name="q40" id="q40_1" value="Tengo menos del 10%"> Tengo menos del 10%</label>
+  <label class="option"><input type="radio" name="q40" id="q40_2" value="Tengo entre el 10 y el 30%"> Tengo entre el 10 y el 30%</label>
+  <label class="option"><input type="radio" name="q40" id="q40_3" value="Tengo entre el 30 y el 60%"> Tengo entre el 30 y el 60%</label>
+  <label class="option"><input type="radio" name="q40" id="q40_4" value="Tengo más del 60%"> Tengo más del 60%</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuántas veces por semana realizan las actividades de "Esta semana escribimos"?</legend>
+  <label class="option"><input type="radio" name="q41" id="q41_0" value="No realizamos las actividades de "Esta semana escribimos"" required> No realizamos las actividades de "Esta semana escribimos"</label>
+  <label class="option"><input type="radio" name="q41" id="q41_1" value="1 vez por semana"> 1 vez por semana</label>
+  <label class="option"><input type="radio" name="q41" id="q41_2" value="2 veces por semana"> 2 veces por semana</label>
+  <label class="option"><input type="radio" name="q41" id="q41_3" value="3 veces por semana"> 3 veces por semana</label>
+  <label class="option"><input type="radio" name="q41" id="q41_4" value="Más de 3 veces por semana"> Más de 3 veces por semana</label>
+  <label class="option"><input type="radio" name="q41" id="q41_5" value="No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)"> No corresponde (estamos leyendo Cuentos con sorpresas/Ventisquero)</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuánto tiempo les toma realizar las actividades de "Esta semana escribimos"?</legend>
+  <label class="option"><input type="radio" name="q42" id="q42_0" value="Menos de 10 minutos" required> Menos de 10 minutos</label>
+  <label class="option"><input type="radio" name="q42" id="q42_1" value="Entre 10 y 30 minutos"> Entre 10 y 30 minutos</label>
+  <label class="option"><input type="radio" name="q42" id="q42_2" value="Entre 30 y 60 minutos"> Entre 30 y 60 minutos</label>
+  <label class="option"><input type="radio" name="q42" id="q42_3" value="Más de 60 minutos"> Más de 60 minutos</label>
+  <label class="option"><input type="radio" name="q42" id="q42_4" value="No corresponde"> No corresponde</label>
+</fieldset>
+<fieldset class="field"><legend>¿Cuánto cree que cambió su manera de enseñar desde que participa del programa?</legend>
+  <label class="option"><input type="radio" name="q43" id="q43_0" value="Mucho" required> Mucho</label>
+  <label class="option"><input type="radio" name="q43" id="q43_1" value="Bastante"> Bastante</label>
+  <label class="option"><input type="radio" name="q43" id="q43_2" value="Poco"> Poco</label>
+  <label class="option"><input type="radio" name="q43" id="q43_3" value="Nada"> Nada</label>
+</fieldset>
+<fieldset class="field"><legend>¿Comparte material audiovisual con las familias a través de WhatsApp?</legend>
+  <label class="option"><input type="radio" name="q44" id="q44_0" value="Siempre" required> Siempre</label>
+  <label class="option"><input type="radio" name="q44" id="q44_1" value="Algunas veces"> Algunas veces</label>
+  <label class="option"><input type="radio" name="q44" id="q44_2" value="Nunca"> Nunca</label>
+  <label class="option"><input type="radio" name="q44" id="q44_3" value="Otro"> Otro</label>
+</fieldset>
+<fieldset class="field"><legend>¿Utilizan en el aula el material complementario?</legend>
+  <label class="option"><input type="radio" name="q45" id="q45_0" value="Si" required> Si</label>
+  <label class="option"><input type="radio" name="q45" id="q45_1" value="No"> No</label>
+</fieldset>
+<fieldset class="field"><legend>¿Qué es lo que usted más valora de las visitas de las Orientadoras Pedagógicas en su escuela? Por favor seleccione como máximo tres aspectos.</legend>
+  <label class="option"><input type="radio" name="q46" id="q46_0" value="Aportan materiales y diferentes recursos para utilizar con los alumnos" required> Aportan materiales y diferentes recursos para utilizar con los alumnos</label>
+  <label class="option"><input type="radio" name="q46" id="q46_1" value="Orientan y apoyan"> Orientan y apoyan</label>
+  <label class="option"><input type="radio" name="q46" id="q46_2" value="Dan herramientas para trabajar en el aula"> Dan herramientas para trabajar en el aula</label>
+  <label class="option"><input type="radio" name="q46" id="q46_3" value="Tienen buena predisposición"> Tienen buena predisposición</label>
+  <label class="option"><input type="radio" name="q46" id="q46_4" value="Nos mantiene conectaods con el plan"> Nos mantiene conectaods con el plan</label>
+  <label class="option"><input type="radio" name="q46" id="q46_5" value="Ninguna"> Ninguna</label>
+</fieldset>
+<fieldset class="field escala"><legend>¿Considera que el programa aporta a su formación profesional? ¿En qué medida?</legend>
+  <label class="option"><input type="radio" name="q47" id="q47_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q47" id="q47_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q47" id="q47_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q47" id="q47_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q47" id="q47_4" value="5"> 5</label>
+</fieldset>
+  <div class="nav"><button type="button" class="secondary" data-prev="datos">Volver</button><button type="button" class="primary siguiente-evaluacion">Siguiente</button></div>
+</section>
+<section id="pantalla-evaluacion" class="screen" hidden>
+  <h2>Evaluación del encuentro</h2>
+<fieldset class="field"><legend>¿Asistió a un encuentro de capacitación docente este mes?</legend>
+  <label class="option"><input type="radio" name="q480" id="q480_0" value="Sí" required> Sí</label>
+  <label class="option"><input type="radio" name="q480" id="q480_1" value="No"> No</label>
+</fieldset>
+<div class="info">Usando una escala del 1 al 5 donde 1 significa "nada adecuado" y 5 "muy adecuado" evalúe los siguientes aspectos del encuentro de hoy: </div>
+<fieldset class="field escala"><legend>Contenidos trabajados</legend>
+  <label class="option"><input type="radio" name="q48a" id="q48a_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q48a" id="q48a_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q48a" id="q48a_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q48a" id="q48a_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q48a" id="q48a_4" value="5"> 5</label>
+</fieldset>
+<fieldset class="field escala"><legend>Claridad en las explicaciones</legend>
+  <label class="option"><input type="radio" name="q48b" id="q48b_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q48b" id="q48b_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q48b" id="q48b_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q48b" id="q48b_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q48b" id="q48b_4" value="5"> 5</label>
+</fieldset>
+<fieldset class="field escala"><legend>Actitud de las capacitadoras</legend>
+  <label class="option"><input type="radio" name="q48c" id="q48c_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q48c" id="q48c_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q48c" id="q48c_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q48c" id="q48c_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q48c" id="q48c_4" value="5"> 5</label>
+</fieldset>
+<fieldset class="field escala"><legend>Uso del tiempo</legend>
+  <label class="option"><input type="radio" name="q48d" id="q48d_0" value="1" required> 1</label>
+  <label class="option"><input type="radio" name="q48d" id="q48d_1" value="2"> 2</label>
+  <label class="option"><input type="radio" name="q48d" id="q48d_2" value="3"> 3</label>
+  <label class="option"><input type="radio" name="q48d" id="q48d_3" value="4"> 4</label>
+  <label class="option"><input type="radio" name="q48d" id="q48d_4" value="5"> 5</label>
+</fieldset>
+<div class="field"><label for="q49">Comentarios y observaciones:</label><input type="text" id="q49" name="q49"></div>
+  <div class="nav"><button type="button" class="secondary" data-prev="dinamico">Volver</button><button type="button" id="btn-evaluacion-finalizar" class="primary">Finalizar</button></div>
+</section>
+
+    <section id="pantalla-final" class="screen" hidden>
+      <h2>¡Gracias!</h2>
+      <p>Tu respuesta quedó guardada en este dispositivo. Cuando tengas conexión, podrás exportarla o compartirla.</p>
+    </section>
+  </main>
+
+  <script src="departamentos.js"></script>
+  <script src="escuelas.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
