@@ -1,6 +1,0 @@
-{
-  "name":"Encuesta Offline",
-  "short_name":"Encuesta",
-  "start_url":"index.html",
-  "display":"standalone"
-}
