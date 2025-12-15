@@ -201,3 +201,15 @@ document.addEventListener("DOMContentLoaded", () => {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
 });
+
+// Fallback de seguridad: ejecutar siempre
+setTimeout(() => {
+  try {
+    poblarDepartamentos();
+    configurarEscuelas();
+    mostrarPantalla("datos");
+  } catch (e) {
+    console.error("Error inicializando encuesta:", e);
+  }
+}, 0);
+
