@@ -31,8 +31,19 @@ function configurarValidaciones() {
 }
 
 function poblarDepartamentos() {
-  const select = document.getElementById("departamento");
-  if (!select || !window.DEPARTAMENTOS) return;
+  const select =
+    document.getElementById("departamento") ||
+    document.getElementById("q5") ||
+    document.querySelector('select[name="q5"]');
+
+  if (!select || !window.DEPARTAMENTOS) {
+    console.warn("No se encontró el select de departamento");
+    return;
+  }
+
+  // Evitar duplicados
+  if (select.options.length > 1) return;
+
   DEPARTAMENTOS.forEach(dep => {
     const opt = document.createElement("option");
     opt.value = dep;
@@ -40,6 +51,7 @@ function poblarDepartamentos() {
     select.appendChild(opt);
   });
 }
+
 
 function configurarEscuelas() {
   const selDep = document.getElementById("departamento");
