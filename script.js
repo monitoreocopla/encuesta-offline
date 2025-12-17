@@ -31,15 +31,34 @@ function configurarValidaciones() {
 }
 
 function poblarDepartamentos() {
-  const select =
-    document.getElementById("departamento") ||
-    document.getElementById("q5") ||
-    document.querySelector('select[name="q5"]');
+  const intentar = () => {
+    const select = document.getElementById("departamento");
 
-  if (!select || !window.DEPARTAMENTOS) {
-    console.warn("No se encontró el select de departamento");
-    return;
-  }
+    if (!select) {
+      // todavía no existe → reintenta
+      setTimeout(intentar, 50);
+      return;
+    }
+
+    // evitar duplicados
+    if (select.options.length > 1) return;
+
+    if (!window.DEPARTAMENTOS || !DEPARTAMENTOS.length) {
+      console.error("DEPARTAMENTOS vacío o no definido");
+      return;
+    }
+
+    DEPARTAMENTOS.forEach(dep => {
+      const opt = document.createElement("option");
+      opt.value = dep;
+      opt.textContent = dep;
+      select.appendChild(opt);
+    });
+  };
+
+  intentar();
+}
+
 
   // Evitar duplicados
   if (select.options.length > 1) return;
