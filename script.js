@@ -1,4 +1,6 @@
-
+/**********************
+ * Utilidades
+ **********************/
 function norm(str) {
   return (str || "")
     .normalize("NFD")
@@ -6,47 +8,41 @@ function norm(str) {
     .toLowerCase();
 }
 
-function mostrarPantalla(idPantalla) {
+/**********************
+ * Mostrar pantallas
+ **********************/
+function mostrarPantalla(id) {
   document.querySelectorAll(".screen").forEach(sec => {
-    sec.hidden = sec.id !== "pantalla-" + idPantalla;
+    sec.hidden = sec.id !== "pantalla-" + id;
   });
 }
 
-function configurarValidaciones() {
-  document.querySelectorAll("[data-dni='1']").forEach(el => {
-    el.addEventListener("input", () => {
-      const solo = el.value.replace(/\D/g, "");
-      if (el.value !== solo) el.value = solo;
-    });
-  });
-
-  document.querySelectorAll("[data-mail='1']").forEach(el => {
-    el.addEventListener("input", () => {
-      const texto = el.value.trim();
-      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (texto && !regex.test(texto)) el.classList.add("input-error");
-      else el.classList.remove("input-error");
-    });
-  });
+/**********************
+ * Esperar a que exista un elemento
+ **********************/
+function whenExists(selector, callback, tries = 0) {
+  const el = document.querySelector(selector);
+  if (el) {
+    callback(el);
+  } else if (tries < 100) {
+    setTimeout(() => whenExists(selector, callback, tries + 1), 50);
+  } else {
+    console.error("No se encontró:", selector);
+  }
 }
 
+/**********************
+ * Departamentos
+ **********************/
 function poblarDepartamentos() {
-  const intentar = () => {
-    const select = document.getElementById("departamento");
-
-    if (!select) {
-      // todavía no existe → reintenta
-      setTimeout(intentar, 50);
+  whenExists("#departamento", select => {
+    if (!window.DEPARTAMENTOS || !DEPARTAMENTOS.length) {
+      console.error("DEPARTAMENTOS no disponible");
       return;
     }
 
     // evitar duplicados
     if (select.options.length > 1) return;
-
-    if (!window.DEPARTAMENTOS || !DEPARTAMENTOS.length) {
-      console.error("DEPARTAMENTOS vacío o no definido");
-      return;
-    }
 
     DEPARTAMENTOS.forEach(dep => {
       const opt = document.createElement("option");
@@ -54,193 +50,184 @@ function poblarDepartamentos() {
       opt.textContent = dep;
       select.appendChild(opt);
     });
-  };
-
-  intentar();
-}
-
-
-  // Evitar duplicados
-  if (select.options.length > 1) return;
-
-  DEPARTAMENTOS.forEach(dep => {
-    const opt = document.createElement("option");
-    opt.value = dep;
-    opt.textContent = dep;
-    select.appendChild(opt);
   });
 }
 
-
+/**********************
+ * Escuelas por departamento
+ **********************/
 function configurarEscuelas() {
-  const selDep = document.getElementById("departamento");
-  const inputEscuela = document.getElementById("escuela");
-  const datalist = document.getElementById("lista-escuelas");
-  const cueInput = document.getElementById("cue_anexo");
+  whenExists("#departamento", selDep => {
+    whenExists("#escuela", inputEscuela => {
+      whenExists("#lista-escuelas", datalist => {
+        whenExists("#cue_anexo", cueInput => {
 
-  if (!selDep || !inputEscuela || !datalist || !cueInput || !window.LISTA_ESCUELAS) return;
+          inputEscuela.disabled = true;
 
-  inputEscuela.disabled = true;
+          selDep.addEventListener("change", () => {
+            datalist.innerHTML = "";
+            inputEscuela.value = "";
+            cueInput.value = "";
 
-  selDep.addEventListener("change", () => {
-    datalist.innerHTML = "";
-    inputEscuela.value = "";
-    cueInput.value = "";
+            if (selDep.value) {
+              inputEscuela.disabled = false;
+              inputEscuela.placeholder = "Escribí nombre o número de escuela";
+            } else {
+              inputEscuela.disabled = true;
+            }
+          });
 
-    if (selDep.value) {
-      inputEscuela.disabled = false;
-      inputEscuela.placeholder = "Escribí para buscar (nombre o número)";
-    } else {
-      inputEscuela.disabled = true;
-      inputEscuela.placeholder = "";
-    }
-  });
+          inputEscuela.addEventListener("input", () => {
+            const texto = norm(inputEscuela.value);
+            const dep = selDep.value;
+            datalist.innerHTML = "";
+            cueInput.value = "";
 
-  inputEscuela.addEventListener("input", () => {
-    const texto = norm(inputEscuela.value);
-    const dep = selDep.value;
-    datalist.innerHTML = "";
-    cueInput.value = "";
-    if (!dep || texto.length < 3) return;
+            if (!dep || texto.length < 3) return;
 
-    LISTA_ESCUELAS
-      .filter(e => e.depto === dep && norm(e.label).includes(texto))
-      .forEach(e => {
-        const opt = document.createElement("option");
-        opt.value = e.label;
-        datalist.appendChild(opt);
+            LISTA_ESCUELAS
+              .filter(e =>
+                e.depto === dep &&
+                norm(e.label).includes(texto)
+              )
+              .slice(0, 30)
+              .forEach(e => {
+                const opt = document.createElement("option");
+                opt.value = e.label;
+                datalist.appendChild(opt);
+              });
+          });
+
+          inputEscuela.addEventListener("change", () => {
+            const dep = selDep.value;
+            const texto = norm(inputEscuela.value);
+            const encontrada = LISTA_ESCUELAS.find(
+              e => e.depto === dep && norm(e.label) === texto
+            );
+            cueInput.value = encontrada ? encontrada.cue : "";
+          });
+
+        });
       });
-  });
-
-  inputEscuela.addEventListener("change", () => {
-    const dep = selDep.value;
-    const texto = norm(inputEscuela.value);
-    const encontrada = LISTA_ESCUELAS.find(
-      e => e.depto === dep && norm(e.label) === texto
-    );
-    cueInput.value = encontrada ? encontrada.cue : "";
+    });
   });
 }
 
+/**********************
+ * Turno (desplegable)
+ **********************/
+function poblarTurno() {
+  whenExists("#turno", select => {
+    if (select.options.length > 1) return;
+
+    ["Mañana", "Tarde", "Jornada completa", "Vespertino", "Otro"].forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t;
+      opt.textContent = t;
+      select.appendChild(opt);
+    });
+  });
+}
+
+/**********************
+ * Validaciones
+ **********************/
+function configurarValidaciones() {
+  document.querySelectorAll("[data-dni]").forEach(el => {
+    el.addEventListener("input", () => {
+      el.value = el.value.replace(/\D/g, "");
+    });
+  });
+
+  document.querySelectorAll("[type='email']").forEach(el => {
+    el.addEventListener("blur", () => {
+      if (el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) {
+        alert("El correo electrónico no tiene un formato válido");
+        el.focus();
+      }
+    });
+  });
+}
+
+/**********************
+ * Navegación por cargo
+ **********************/
 function irDesdeDatos() {
-  const cargoSel = document.getElementById("q8");
-  if (!cargoSel) {
-    mostrarPantalla("evaluacion");
-    return;
-  }
-  const cargo = cargoSel.value;
+  const cargo = document.getElementById("q8")?.value;
+
   if (!cargo) {
-    alert("Por favor elegí tu cargo antes de continuar.");
+    alert("Seleccioná tu cargo para continuar");
     return;
   }
+
   if (cargo === "Director/a" || cargo === "Vicedirector/a") {
     mostrarPantalla("directivos");
-    return;
-  }
-  if (cargo === "Docente de grado") {
+  } else if (cargo === "Docente de grado") {
     mostrarPantalla("docentes");
-    return;
-  }
-  if (cargo === "Directivo con grado a cargo" || cargo === "Personal único") {
+  } else if (cargo === "Directivo con grado a cargo" || cargo === "Personal único") {
     mostrarPantalla("dir-grado");
-    return;
+  } else {
+    mostrarPantalla("evaluacion");
   }
-  // Otro -> directo a evaluación
+}
+
+function volverAEvaluacion() {
   mostrarPantalla("evaluacion");
 }
 
-function irAEvaluacion() {
-  mostrarPantalla("evaluacion");
-}
-
-function volverDesdeEvaluacion() {
-  const cargoSel = document.getElementById("q8");
-  if (!cargoSel) {
-    mostrarPantalla("datos");
-    return;
-  }
-  const cargo = cargoSel.value;
-  if (cargo === "Director/a" || cargo === "Vicedirector/a") {
-    mostrarPantalla("directivos");
-    return;
-  }
-  if (cargo === "Docente de grado") {
-    mostrarPantalla("docentes");
-    return;
-  }
-  if (cargo === "Directivo con grado a cargo" || cargo === "Personal único") {
-    mostrarPantalla("dir-grado");
-    return;
-  }
-  mostrarPantalla("datos");
-}
-
+/**********************
+ * Guardar respuestas
+ **********************/
 function recolectarRespuestas() {
-  const datos = {};
-  const inputs = document.querySelectorAll("input, select, textarea");
-  inputs.forEach(el => {
+  const data = {};
+  document.querySelectorAll("input, select, textarea").forEach(el => {
     if (!el.name && !el.id) return;
     const key = el.name || el.id;
+
     if (el.type === "radio") {
-      if (el.checked) datos[key] = el.value;
+      if (el.checked) data[key] = el.value;
     } else if (el.type === "checkbox") {
-      if (!datos[key]) datos[key] = [];
-      if (el.checked) datos[key].push(el.value);
+      if (!data[key]) data[key] = [];
+      if (el.checked) data[key].push(el.value);
     } else {
-      datos[key] = el.value;
+      data[key] = el.value;
     }
   });
-  // timestamp
-  datos["fecha"] = new Date().toISOString();
-  return datos;
+
+  data.fecha = new Date().toISOString();
+  return data;
 }
 
 function guardarRespuestas() {
-  const payload = recolectarRespuestas();
-  const prev = JSON.parse(localStorage.getItem("encuesta_respuestas") || "[]");
-  prev.push(payload);
-  localStorage.setItem("encuesta_respuestas", JSON.stringify(prev));
+  const prev = JSON.parse(localStorage.getItem("respuestas_encuesta") || "[]");
+  prev.push(recolectarRespuestas());
+  localStorage.setItem("respuestas_encuesta", JSON.stringify(prev));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/**********************
+ * Inicialización FORZADA
+ **********************/
+setTimeout(() => {
+  // mostrar pantalla inicial
   mostrarPantalla("datos");
-  configurarValidaciones();
+
   poblarDepartamentos();
   configurarEscuelas();
+  poblarTurno();
+  configurarValidaciones();
 
-  const btnDatosSig = document.getElementById("btn-datos-siguiente");
-  if (btnDatosSig) btnDatosSig.addEventListener("click", irDesdeDatos);
+  // botones
+  document.getElementById("btn-datos-siguiente")
+    ?.addEventListener("click", irDesdeDatos);
 
-  document.querySelectorAll(".siguiente-evaluacion").forEach(btn => {
-    btn.addEventListener("click", irAEvaluacion);
-  });
+  document.querySelectorAll(".siguiente-evaluacion")
+    .forEach(b => b.addEventListener("click", volverAEvaluacion));
 
-  document.querySelectorAll("#pantalla-directivos .secondary[data-prev='datos'], #pantalla-docentes .secondary[data-prev='datos'], #pantalla-dir-grado .secondary[data-prev='datos']").forEach(btn => {
-    btn.addEventListener("click", () => mostrarPantalla("datos"));
-  });
+  document.getElementById("btn-evaluacion-finalizar")
+    ?.addEventListener("click", () => {
+      guardarRespuestas();
+      mostrarPantalla("final");
+    });
 
-  const volverEval = document.querySelector("#pantalla-evaluacion .secondary[data-prev='dinamico']");
-  if (volverEval) volverEval.addEventListener("click", volverDesdeEvaluacion);
-
-  const btnFin = document.getElementById("btn-evaluacion-finalizar");
-  if (btnFin) btnFin.addEventListener("click", () => {
-    guardarRespuestas();
-    mostrarPantalla("final");
-  });
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
-  }
-});
-
-// Fallback de seguridad: ejecutar siempre
-setTimeout(() => {
-  try {
-    poblarDepartamentos();
-    configurarEscuelas();
-    mostrarPantalla("datos");
-  } catch (e) {
-    console.error("Error inicializando encuesta:", e);
-  }
 }, 0);
 
